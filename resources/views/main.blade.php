@@ -33,19 +33,43 @@
 
             function editTable(){
                 const table = document.querySelector('#my-table');
-                var td = table.getElementsByTagName('td');
+                var cells = table.getElementsByTagName('td');
 
-                for (var i=0; i < td.length; i++){
-                   td[i].onclick = function(){
+                for (var i=0; i < cells.length; i++){
+                    //kliknięcie
+                   cells[i].onclick = function(){
+                       if(this.hasAttributes('data-clicked')){
+                           return
+                       }
+
+                       this.setAttribute('data-clicked','yes');
+                       this.setAttribute('data-text',this.innerHTML);
+
                    var input = document.createElement('input');
                     input.setAttribute('type','text');
                     input.value = this.innerHTML;
-                       //input.style.width = this.offsetWidth;
-                    input.style.height = this.offsetHeight + "px";
+                    //input.style.width = this.offsetWidth;
+                    input.style.height = "26px";
                     input.style.border = "0px";
                     input.style.textAlign = "inherit"
                        input.style.backgroundColor = '#a6a6a6'
 
+                       //odkliknięcie
+                    input.onblur = function (){
+                        var td = input.parentElement;
+                        var orig_text = input.parentElement.getAttribute('data-text');
+                        var current_text = this.value;
+
+                        td.removeAttribute('data-clicked');
+                        td.removeAttribute('data-text');
+                        td.style.cssText = '';
+
+                        if(orig_text != current_text){
+                            //zapis
+                            td.innerHTML = current_text;
+                        }
+
+                    }
 
                     this.innerHTML= '';
                     this.style.cssText = 'padding: 0 0';
@@ -84,6 +108,8 @@
 
                 // utwórz kod HTML wierszy tabeli na podstawie danych JSON
 
+
+
                 const rows = data.map(item => {
                     let html = '';
                     Object.keys(item).forEach(key => {
@@ -110,7 +136,8 @@
         </script>
     </head>
     <body>
-
+    <button onclick="window.location.href='/table'">Import z pliku</button>
+    <button onclick="window.location.href=''">Eksport do pliku</button>
     <div id="error"></div>
 
     <table id="my-table"></table>
