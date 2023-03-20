@@ -17,16 +17,48 @@
            }
        </style>
         <script>
+
             fetch('/file')
                 .then(response => response.json())
                 .then(data => {
-                    createTable(data.rows)
-                    console.log(data.prodCount);
+                    if(data.error){
+                        const errorDiv = document.querySelector('#error');
+                        const error = `<p>${data.error}</p>`
+                        errorDiv.innerHTML = error;
+                    }
+                    displayTable(data.rows);
+                    displayProducents(data.prodNames,data.prodCount);
+                    editTable();
                 });
 
+            function editTable(){
+                const table = document.querySelector('#my-table');
+                var td = table.getElementsByTagName('td');
+
+                for (var i=0; i < td.length; i++){
+                   td[i].onclick = function(){
+                   var input = document.createElement('input');
+                    input.setAttribute('type','text');
+                    input.value = this.innerHTML;
+                       //input.style.width = this.offsetWidth;
+                    input.style.height = this.offsetHeight + "px";
+                    input.style.border = "0px";
+                    input.style.textAlign = "inherit"
+                       input.style.backgroundColor = '#a6a6a6'
 
 
-            function createTable(data) {
+                    this.innerHTML= '';
+                    this.style.cssText = 'padding: 0 0';
+                    this.append(input);
+                    this.firstElementChild.select();
+
+                    }
+                }
+            }
+
+
+
+            function displayTable(data) {
                 // pobierz referencję do elementu tabeli HTML
                 const table = document.querySelector('#my-table');
 
@@ -61,15 +93,28 @@
                 });
 
 
-                const html = `<table>${headerRow}${rows.join('')}</table>`;
+                const html = `<table">${headerRow}${rows.join('')}</table>`;
                 table.innerHTML = html;
+            }
+
+            function displayProducents(prodNames, prodCount){
+                const producents = document.querySelector('#producents');
+                var html = ``;
+
+                for (let i = 0; i < prodNames.length; i++) {
+                    html += `Liczba egzemplarzy firmy ${prodNames[i]} : ${prodCount[i]}</br>`;
+                }
+                producents.innerHTML = html;
             }
 
         </script>
     </head>
     <body>
 
+    <div id="error"></div>
+
     <table id="my-table"></table>
 
+    <div id="producents"></div>
     </body>
 </html>

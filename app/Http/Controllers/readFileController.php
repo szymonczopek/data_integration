@@ -42,8 +42,10 @@ class readFileController extends Controller
         try {
             $lines = File::lines($filename);
         } catch (FileNotFoundException $e) {
-            // wyjątek związanym z brakiem pliku
-            return $e->getMessage();
+            return response()->json([
+                'error' => $e->getMessage()],
+                500)
+                ->header('Content-Type', 'application/json');
         }
 
 
@@ -53,6 +55,7 @@ class readFileController extends Controller
             array_unshift($elements, $rowNumber);
             $rows[] = $elements;
         }
+        array_pop($rows);
         array_pop($rows);
 
        foreach ($rows as $row){
@@ -82,12 +85,13 @@ class readFileController extends Controller
 
         foreach ($producentNames as $producentName){
           //  echo "Liczba produktów ". $producentName. ": ".$producentCounter[$producentName]."</br>";
-            $prodCount[] = $producentCounter[$producentName];
+            $producentCount[] = $producentCounter[$producentName];
        }
 
         return response()->json([
             'rows' => $rows,
-            'prodCount' => $prodCount],
+            'prodNames' => $producentNames,
+            'prodCount' => $producentCount],
             200)
             ->header('Content-Type', 'application/json');
 
