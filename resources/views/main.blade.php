@@ -15,6 +15,7 @@
            td {
                text-align: center;
            }
+
        </style>
         <script>
 
@@ -35,6 +36,7 @@
                 const table = document.querySelector('#my-table');
                 var cells = table.getElementsByTagName('td');
 
+
                 for (var i=0; i < cells.length; i++){
                     //kliknięcie
                    cells[i].onclick = function(){
@@ -49,6 +51,7 @@
                     input.setAttribute('type','text');
                     input.value = this.innerHTML;
                     //input.style.width = this.offsetWidth;
+
                     input.style.height = "26px";
                     input.style.border = "0px";
                     input.style.textAlign = "inherit"
@@ -108,18 +111,16 @@
 
                 // utwórz kod HTML wierszy tabeli na podstawie danych JSON
 
-
-
-                const rows = data.map(item => {
+                const rows = data.map((item, index) => {
                     let html = '';
                     Object.keys(item).forEach(key => {
-                        html += `<td>${item[key]}</td>`;
+                        html += `<td id="${index} ${key}">${item[key]}</td>`;
                     });
                     return `<tr>${html}</tr>`;
                 });
 
 
-                const html = `<table">${headerRow}${rows.join('')}</table>`;
+                const html = `<table>${headerRow}${rows.join('')}</table>`;
                 table.innerHTML = html;
             }
 
@@ -138,6 +139,8 @@
     <body>
     <button onclick="window.location.href='/table'">Import z pliku</button>
     <button onclick="window.location.href=''">Eksport do pliku</button>
+
+
     <div id="error"></div>
 
     <table id="my-table"></table>
