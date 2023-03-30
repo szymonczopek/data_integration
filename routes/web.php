@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/file', [App\Http\Controllers\readFileController::class,'readFile']);
-Route::get('/table', [App\Http\Controllers\readFileController::class,'displayMain']);
+Route::get('/importFile', [App\Http\Controllers\readFileController::class,'readFile']);
+Route::post('/exportFile', [App\Http\Controllers\readFileController::class,'exportFile']);
+Route::get('/', [App\Http\Controllers\readFileController::class,'displayMain']);
 
-Route::get('/', [App\Http\Controllers\readFileController::class,'displayStart']);
 
