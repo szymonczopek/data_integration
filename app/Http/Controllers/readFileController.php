@@ -7,6 +7,9 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Response;
+use Carbon\Carbon;
+
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -107,35 +110,37 @@ class readFileController extends Controller
 
     }
     public function displayMain(){
-        $header = ["Lp.","Producent", "Wielkość matrycy", "Rozdzielczość", "Typ matrycy", "Ekran dotykowy",
-            "Procesor", "Liczba rdzeni fizycznych", "Taktowanie (MHz)", "RAM", "Pojemność dysku",
+        $header = ["Lp.","Producent", "Wielkość ekranu", "Rozdzielczość", "Rodzaj ekranu", "Ekran dotykowy",
+            "Procesor", "Liczba rdzeni procesora", "Częstotliwość procesora", "RAM", "Pojemność dysku",
             "Typ dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
             "Napęd optyczny"];
         return view('main')->with('header', $header);
 }
 
    function exportFile(Request $request){
+
        $parameters = json_decode($request->getContent(), false, 512, JSON_THROW_ON_ERROR);
-       $laptops = $parameters->laptops;
-var_dump('lll');
-       $date = new DateTime();
-       $fileName = 'katalog_' . $date->format('H_i_s_d_m_Y') . '.txt';
+       $laptops = $parameters->rows;
 
-       //
-       $filePath = storage_path('app/tekstowy_plik.txt');
+       $date = Carbon::now()->tz('Europe/Warsaw');;
+      $fileName = 'plik'.$date->format('d-m-y H-i-s').'.txt';
+      $dir = 'app/';
+      Storage::makeDirectory($dir);
+      $filePath = $dir.'/'.$fileName;
 
-// dodajemy linię do pliku
 
-           File::append($filePath, $laptops);
-
-       //
+      foreach ($laptops as $laptop){
+          $line = '';
+          foreach ($laptop as $lap){
+              $line .= $lap.';';
+          }
+          Storage::append($filePath, $line);
+      }
 
 
        return response()->json([
-           'message' => 'dziaaaa'
-       ],
-           200)
-           ->header('Content-Type', 'application/json');
+           'message' => 'Wyeksportowano pomyslnie'
+       ],200)->header('Content-Type', 'application/json');
    }
 
 }

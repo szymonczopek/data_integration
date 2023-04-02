@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/importFile', [App\Http\Controllers\readFileController::class,'readFile']);
-Route::post('/exportFile', [App\Http\Controllers\readFileController::class,'exportFile']);
+Route::any('/exportFile', [App\Http\Controllers\readFileController::class,'exportFile']);
 Route::get('/', [App\Http\Controllers\readFileController::class,'displayMain']);
 
 
