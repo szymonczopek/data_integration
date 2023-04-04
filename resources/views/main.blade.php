@@ -111,7 +111,7 @@
             newInput.name = currentElement.className;
             newInput.required = isRequired;
             newInput.setAttribute('value', currentElement.textContent);
-            if (Object.keys(otherAttributes).length !== 0) {
+            if (Object.keys(otherAttributes).length !== 0 && Object.keys(otherAttributes).length != null) {
                 Object.keys(otherAttributes).forEach((key) => {
                     switch (key) {
                         case 'pattern':
@@ -378,19 +378,20 @@
             });
 
         exportFile.addEventListener('click', async () => {
+
+            console.log(JSON.stringify(laptops))
             bodyy = {
-                'laptops': laptops
+                'rows': laptops
             };
             let isError = false;
             let message = '';
-            const endpoint = '/exportFile';
 
-            await fetch(endpoint, {
-                method: "POST",
-                body: JSON.stringify(bodyy),
+            await fetch('/exportFile', {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                method: 'POST',
+                body: JSON.stringify(bodyy),
             })
                 .then( async (response) => {
                     const responseData = await response.json()
