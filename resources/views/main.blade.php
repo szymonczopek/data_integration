@@ -76,6 +76,7 @@
             '14"', '14,1"', '14,2"', '14,4"', '14,5"', '15"', '15,6"', '16"', '16,1"', '16,2"',
             '17"', '17,3"', '18"'];
 
+
         var laptops = isImported('laptops');
 
         function isImported(item) {
@@ -111,7 +112,7 @@
             newInput.name = currentElement.className;
             newInput.required = isRequired;
             newInput.setAttribute('value', currentElement.textContent);
-            if (Object.keys(otherAttributes).length !== 0 && Object.keys(otherAttributes).length != null) {
+            if (Object.keys(otherAttributes).length !== 0) {
                 Object.keys(otherAttributes).forEach((key) => {
                     switch (key) {
                         case 'pattern':
@@ -163,13 +164,13 @@
             switch (cell.className) {
                 case 'manufacturer':
                     // editableField = createInput(currentCell, 'text', true, {minlength: '2', maxlength: '10'})
-                    editableField = createInput(cell, 'text', true,{minlength: '2', maxlength: '10'});
+                    editableField = createInput(cell, 'text', true,{minlength: 2, maxlength: 16});
                     break
                 case 'size':
                     editableField = createSelect(cell, size, true);
                     break
                 case 'resolution':
-                    editableField = createInput(cell, 'text', true);
+                    editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{3,4}x[0-9]{3,4}$' });
                     break
                 case 'matrixType':
                     editableField = createSelect(cell, matrixTypes, true);
@@ -184,13 +185,14 @@
                     editableField = createSelect(cell, cores, true);
                     break
                 case 'clockSpeed':
-                    editableField = createInput(cell, 'text', true);
+                    editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}$' });
                     break
                 case 'ram':
-                    editableField = createInput(cell, 'text', true);
+                    editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}GB$' });
+
                     break
                 case 'discCapacity':
-                    editableField = createInput(cell, 'text', true);
+                    editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{3,}GB$' });
                     break
                 case 'disks':
                     editableField = createSelect(cell, disks, true);
@@ -199,7 +201,7 @@
                     editableField = createInput(cell, 'text', true);
                     break
                 case 'graphicsCardMemory':
-                    editableField = createInput(cell, 'text', true);
+                    editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}GB$' });
                     break
                 case 'operatingSystem':
                     editableField = createInput(cell, 'text', true);
@@ -230,6 +232,7 @@
                 TableBody.append(newRow);
                 ++rowCounter;
             })
+
             let cellsCollection = TableDiv.getElementsByTagName('td')
             for(let i = 0; i < cellsCollection.length; i++) {
                 cellsCollection[i].addEventListener('dblclick', (event) => {
@@ -249,10 +252,11 @@
                             const editedCell = editableCell.parentElement;
 
                             if (isValidInput(editableCell)) {
-                                editedCell.removeChild(editedCell.lastChild);
-                                editedCell.style.removeProperty('border');
-
-                                editableCell.blur();
+                                if(editedCell.lastChild !== null) {
+                                    editedCell.removeChild(editedCell.lastChild);
+                                    editedCell.style.removeProperty('border');
+                                    editableCell.blur();
+                                }
                             } else {
                                 let errors = validateInput(editableCell)
                                 let errorsText = '';
@@ -291,22 +295,26 @@
             switch (input.tagName.toLowerCase()) {
                 case 'input': {
                     if (input.value === "") {
-                        errors.push('This field is required.');
+                        errors.push('Pole nie moze być puste.');
                     }
-                      if (input.value.length < input.getAttribute('minlength')) {
-                        errors.push('This field should contain at least ' + input.getAttribute('minlength') + ' characters.');
+                    if (input.getAttribute('minlength') && input.value.length < input.getAttribute('minlength')) {
+                        if(input.getAttribute('minlength') > 4) errors.push('To pole powinno zawierac przynajmniej ' + input.getAttribute('minlength') + ' znakow.');
+                        else errors.push('To pole powinno zawierac przynajmniej ' + input.getAttribute('minlength') + ' znaki.');
+
                       }
-                      if (input.value.length > input.getAttribute('maxlength')) {
-                        errors.push('This field should contain at most ' + input.getAttribute('maxlength') + ' characters.');
+                      if (input.getAttribute('maxlength') && input.value.length > input.getAttribute('maxlength')) {
+                        errors.push('To pole powinno zawierac maksymalnie ' + input.getAttribute('maxlength') + ' znakow.');
                       }
-                       if (input.value.length < input.getAttribute('minlength') && input.value.length > input.getAttribute('maxlength')) {
-                         errors.push('This field should contain between ' + input.getAttribute('minlength') + 'and' + input.getAttribute('maxlength') + ' characters.');
+                       if (input.getAttribute('minlength') && input.getAttribute('maxlength') && input.value.length < input.getAttribute('minlength') && input.value.length > input.getAttribute('maxlength')) {
+                         errors.push('To pole powinno zawierac pomiedzy ' + input.getAttribute('minlength') + 'a' + input.getAttribute('maxlength') + ' znakow.');
                        }
-                    //   const regex = input.getAttribute('pattern')
-                    //   if (!regex.test(input.value)) {
-                    //     errors.push('This field should match the given pattern: ' + regex)
-                    //   }
-                    break;
+                       if(input.getAttribute('pattern') !== null) {
+                           var regexp = input.getAttribute('pattern')
+                           regexp = new RegExp(regexp)
+                           if (!regexp.test(input.value)) {
+                               errors.push('Niepoprawna forma zapisu')
+                           }
+                       }break;
                 }
                 case 'select': {
                     if (input.value === "") {
@@ -337,7 +345,7 @@
         }
 
         window.addEventListener('load', () => {
-            displayTable(laptops)
+            displayTable(laptops);
         })
 
             importFile.addEventListener('click', async () => {
@@ -355,7 +363,7 @@
                         }
                         laptops = data.rows;
                         message = data.message;
-                        sessionStorage.setItem('laptops', JSON.stringify(laptops))
+                        sessionStorage.setItem('laptops', JSON.stringify(laptops));
                         if (isImported('laptops').length > 0) {
                             TableBody.innerHTML = '';
                         }
@@ -394,24 +402,24 @@
                 body: JSON.stringify(bodyy),
             })
                 .then( async (response) => {
-                    const responseData = await response.json()
-                    message = responseData.message
+                    const responseData = await response.json();
+                    message = responseData.message;
                     if (!response.ok) {
-                        throw new Error(`${responseData.message}.`)
+                        throw new Error(`${responseData.message}.`);
                     }
                     console.log(responseData)
                 })
                 .catch( (error) => {
                     // console.log(error)
-                    isError = true
+                    isError = true;
                 });
 
             const newDiv = document.createElement('div')
             newDiv.textContent = message
             if (isError) {
-                newDiv.style.color = 'red'
+                newDiv.style.color = 'red';
             }
-            TableDiv.after(newDiv)
+            TableDiv.after(newDiv);
 
         })
 
