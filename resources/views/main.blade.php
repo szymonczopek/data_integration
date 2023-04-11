@@ -198,13 +198,13 @@
                     editableField = createSelect(cell, disks, true);
                     break
                 case 'graphicsCard':
-                    editableField = createInput(cell, 'text', true);
+                    editableField = createInput(cell, 'text', true,{minlength: 2, maxlength: 32});
                     break
                 case 'graphicsCardMemory':
                     editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}GB$' });
                     break
                 case 'operatingSystem':
-                    editableField = createInput(cell, 'text', true);
+                    editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}GB$' });
                     break
                 case 'drives':
                     editableField = createSelect(cell, drives, true);
