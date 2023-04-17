@@ -12,10 +12,20 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/', [App\Http\Controllers\readFileController::class,'displayTxtMain']);
 
-Route::get('/importFile', [App\Http\Controllers\readFileController::class,'readFile']);
-Route::post('/exportFile', [App\Http\Controllers\readFileController::class,'exportFile']);
-Route::get('/exportFile', [App\Http\Controllers\readFileController::class,'exportFile']);
-Route::get('/', [App\Http\Controllers\readFileController::class,'displayMain']);
+
+
+Route::get('/importTxtFile', [App\Http\Controllers\readFileController::class,'importTxtFile']);
+Route::post('/exportFile', [App\Http\Controllers\readFileController::class,'exportTxtFile']);
+Route::get('/exportFile', [App\Http\Controllers\readFileController::class,'exportTxtFile']);
+
+Route::get('/importXmlFile', [App\Http\Controllers\readXmlController::class,'importXmlFile']);
+
+Route::get('/xml', [App\Http\Controllers\readXmlController::class,'displayXmlMain']);
+
+
+
+
 
 

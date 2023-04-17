@@ -8,16 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
-
 use Illuminate\Support\Facades\Storage;
-
-
 
 
 class readFileController extends Controller
 {
-
-    public function readFile(){
+    public function importTxtFile(){
 
         $tbl = new Console_Table();
         $tbl->setHeaders(
@@ -100,7 +96,7 @@ class readFileController extends Controller
             'rows' => $rows,
             'prodNames' => $producentNames,
             'prodCount' => $producentCount,
-            'message' => 'Successfully imported file'
+            'message' => 'Plik TXT zaimportowano pomyslnie'
         ],
             200)
             ->header('Content-Type', 'application/json');
@@ -109,7 +105,7 @@ class readFileController extends Controller
 
 
     }
-    public function displayMain(){
+    public function displayTxtMain(){
         $header = ["Lp.","Producent", "Wielkość ekranu", "Rozdzielczość", "Rodzaj ekranu", "Ekran dotykowy",
             "Procesor", "Liczba rdzeni procesora", "Częstotliwość procesora", "RAM", "Pojemność dysku",
             "Typ dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
@@ -117,7 +113,8 @@ class readFileController extends Controller
         return view('main')->with('header', $header);
 }
 
-   function exportFile(Request $request){
+
+   function exportTxtFile(Request $request){
 
        $parameters = json_decode($request->getContent(), false, 512, JSON_THROW_ON_ERROR);
        $laptops = $parameters->rows;
@@ -139,7 +136,7 @@ class readFileController extends Controller
 
 
        return response()->json([
-           'message' => 'Wyeksportowano pomyslnie'
+           'message' => 'Plik TXT wyekportowano pomyślnie'
        ],200)->header('Content-Type', 'application/json');
    }
 

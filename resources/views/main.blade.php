@@ -36,20 +36,22 @@
     </head>
     <body>
 
-    <button type="button" id="importFile">Import z pliku</button>
-    <button type="button" id="exportFile">Eksport do pliku</button>
+    <button type="button" id="importTxtFile">Import z pliku txt</button>
+    <button type="button" id="exportTxtFile">Eksport do pliku txt</button>
+    <button type="button" id="importXmlFile">Import z pliku xml</button>
+    <button type="button" id="exportXmlFile">Eksport do pliku xml</button>
 
     <div id="error"></div>
 
 
     <table id="TableDiv">
-        <thead>
+        {{--<thead>
         <tr>
             @foreach($header as $hd)
                 <th>{{ $hd }}</th>
             @endforeach
         </tr>
-        </thead>
+        </thead>--}}
         <tbody id="TableBody">
         </tbody>
     </table>
@@ -58,10 +60,13 @@
     <div id="producents"></div>
 
     <script>
-        const importFile = document.getElementById("importFile");
-        const exportFile = document.getElementById("exportFile");
+        const importTxtFile = document.getElementById("importTxtFile");
+        const exportTxtFile = document.getElementById("exportTxtFile");
+        const importXmlFile = document.getElementById("importXmlFile");
+        const exportXmlFile = document.getElementById("exportXmlFile");
         const TableDiv = document.getElementById("TableDiv");
         const TableBody = document.getElementById("TableBody");
+        var tHead = document.getElementById("tHead");
 
 
 
@@ -103,6 +108,23 @@
                 case 13: return 'graphicsCardMemory';
                 case 14: return 'operatingSystem';
                 case 15: return 'drives';
+
+                case 'id': return 'counter';
+                case 'manufacturer': return 'manufacturer';
+                case 'resolution': return 'resolution';
+                case 'size': return 'size';
+                case 'typeMatrix': return 'matrixType';
+                case 'touch': return 'touchscreen';
+                case 'processor': return 'processor';
+                case 'physical_cores': return 'cores';
+                case 'clock_speed': return 'clockSpeed';
+                case 'ram': return 'ram';
+                case 'storage': return 'discCapacity';
+                case 'typeDisks': return 'disks';
+                case 'name': return 'graphicsCard';
+                case 'memory': return 'graphicsCardMemory';
+                case 'os': return 'operatingSystem';
+                case 'disc_reader': return 'drives';
             }
         }
         function createInput(currentElement, type, isRequired = false, otherAttributes = {}) {
@@ -213,7 +235,7 @@
             return editableField;
         }
 
-        function displayTable(data) {
+        function displayTxtTable(data) {
             var rowCounter = 0;
             var columnCounter = 0;
 
@@ -221,14 +243,17 @@
                 const newRow = document.createElement('tr');
                 newRow.setAttribute('id', 'row_' + rowCounter);
                 columnCounter = 0;
+
                 row.forEach((cell) => {
-                    const newCell = document.createElement('td');
+                   const newCell = document.createElement('td');
                     newCell.classList.add(getClassNameByColumn(columnCounter));
                     newCell.setAttribute('id', 'field_' + rowCounter + '_' + columnCounter);
                     newCell.textContent = cell;
                     newRow.appendChild(newCell);
                     ++columnCounter;
+
                 })
+
                 TableBody.append(newRow);
                 ++rowCounter;
             })
@@ -280,6 +305,130 @@
             }
 
         }
+        function displayXmlTable(data) {
+            var rowCounter = 0;
+            var columnCounter = 0;
+
+            const headers = ["Lp.","Producent", "Ekran dotykowy", "Wielkość ekranu", "Rozdzielczosc", "Rodzaj ekranu",
+                "Procesor", "Liczba rdzeni procesora", "Częstotliwość procesora", "RAM",
+                "Typ dysku","Pojemność dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
+                "Napęd optyczny"];
+
+            const tableHeaderRow = document.createElement('tr');
+
+            headers.forEach((element)=>{
+                const label = document.createElement('th');
+                label.textContent = element;
+                tableHeaderRow.append(label);
+            })
+            const tableHeaderLabels = document.createElement('thead');
+            tableHeaderLabels.append(tableHeaderRow);
+            TableDiv.append(tableHeaderLabels);
+
+
+            for (const item of data) { // I
+                const newRow = document.createElement('tr');
+                newRow.setAttribute('id', 'row_' + rowCounter);
+                columnCounter = 0;
+
+                for (const prop in item) { // II
+
+
+                    if (typeof item[prop] === 'object' && !Array.isArray(item[prop])) { // jesli obiekt
+                        for (const obj in (item[prop])) {
+                                console.log(obj+':'+item[prop][obj]);
+                            const newCell = document.createElement('td');
+                            newCell.classList.add(getClassNameByColumn(obj));//trzeba pamietac o type screen i type disk
+                            newCell.setAttribute('id', 'field_' + rowCounter + '_' + columnCounter);
+                            newCell.textContent = item[prop][obj];
+                            newRow.appendChild(newCell);
+                            ++columnCounter;
+                            }
+                        }
+
+                    else { //jesli wartosc
+                        console.log(prop+':'+item[prop])
+                        const newCell = document.createElement('td');
+                        newCell.classList.add(getClassNameByColumn(prop))
+                        newCell.setAttribute('id', 'field_' + rowCounter + '_' + columnCounter);
+                        newCell.textContent = item[prop];
+                        newRow.appendChild(newCell);
+                        ++columnCounter;
+                    }
+
+                }
+                console.log('--------');
+                TableBody.append(newRow);
+                ++rowCounter;
+            }
+           /*for(let i=0; i<data.length; i++){
+                const newRow = document.createElement('tr');
+                newRow.setAttribute('id', 'row_' + rowCounter);
+                columnCounter = 0;
+
+
+
+                /*row.forEach((cell) => {
+                    const newCell = document.createElement('td');
+                    newCell.classList.add(getClassNameByColumn(columnCounter));
+                    newCell.setAttribute('id', 'field_' + rowCounter + '_' + columnCounter);
+                    newCell.textContent = cell;
+                    newRow.appendChild(newCell);
+                    ++columnCounter;
+
+                })*/
+
+
+            //}
+
+
+            /*let cellsCollection = TableDiv.getElementsByTagName('td')
+            for(let i = 0; i < cellsCollection.length; i++) {
+                cellsCollection[i].addEventListener('dblclick', (event) => {
+                    let currentCell = event.target;
+                    let editableCell = createEditableCell(currentCell);
+                    editableCell.addEventListener('blur', () => {
+                        let editedCell = editableCell.parentElement;
+                        let currentValue = editableCell.value;
+                        updateVariable(editedCell, currentValue);
+                        currentCell.removeChild(editableCell);
+                        editedCell.textContent = currentValue;
+                    })
+                    editableCell.addEventListener('keypress', (event) => {
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
+
+                            const editedCell = editableCell.parentElement;
+
+                            if (isValidInput(editableCell)) {
+                                if(editedCell.lastChild !== null) {
+                                    editedCell.removeChild(editedCell.lastChild);
+                                    editedCell.style.removeProperty('border');
+                                    editableCell.blur();
+                                }
+                            } else {
+                                let errors = validateInput(editableCell)
+                                let errorsText = '';
+                                errors.forEach((error) => {
+                                    errorsText += error + "\n";
+                                })
+
+                                const newSpan = document.createElement('span');
+                                newSpan.textContent = errorsText;
+                                editableCell.after(newSpan);
+                                editedCell.style.border = '5px solid rgb(200, 0, 0)';
+                            }
+                        }
+                    })
+                    currentCell.textContent = ''
+                    currentCell.appendChild(editableCell);
+                    if (currentCell.firstChild.tagName.toLowerCase() === 'input'){
+                        currentCell.firstChild.select();
+                    }
+                })
+            }
+*/
+        }
 
         function updateVariable(cell, value) {
             const splittedId = cell.id.split('_');
@@ -308,17 +457,17 @@
                        if (input.getAttribute('minlength') && input.getAttribute('maxlength') && input.value.length < input.getAttribute('minlength') && input.value.length > input.getAttribute('maxlength')) {
                          errors.push('To pole powinno zawierac pomiedzy ' + input.getAttribute('minlength') + 'a' + input.getAttribute('maxlength') + ' znakow.');
                        }
-                       if(input.getAttribute('pattern') !== null) {
+                       if(input.getAttribute('pattern') !== null && input.value !== "") {
                            var regexp = input.getAttribute('pattern')
                            regexp = new RegExp(regexp)
                            if (!regexp.test(input.value)) {
-                               errors.push('Niepoprawna forma zapisu')
+                               errors.push('Niepoprawna forma zapisu.')
                            }
-                       }break;
-                }
+                       }
+                }break;
                 case 'select': {
                     if (input.value === "") {
-                        errors.push('This field is required.')
+                        errors.push('To pole jest wymagane.')
                     }
                     break;
                 }
@@ -344,14 +493,14 @@
             producents.innerHTML = html;
         }
 
-        window.addEventListener('load', () => {
+        /*window.addEventListener('load', () => {
             displayTable(laptops);
-        })
+        })*/
 
-            importFile.addEventListener('click', async () => {
+            importTxtFile.addEventListener('click', async () => {
                 var isError = false;
                 var message = '';
-                await fetch('/importFile', {
+                await fetch('/importTxtFile', {
                     method: 'GET'
                 })
                     .then(async (response) => await response.json())
@@ -367,7 +516,7 @@
                         if (isImported('laptops').length > 0) {
                             TableBody.innerHTML = '';
                         }
-                        displayTable(laptops);
+                        displayTxtTable(laptops);
                     })
                     .catch( (error) => {
                         // console.log(error)
@@ -385,9 +534,8 @@
 
             });
 
-        exportFile.addEventListener('click', async () => {
-
-            console.log(JSON.stringify(laptops))
+        exportTxtFile.addEventListener('click', async () => {
+            //console.log(JSON.stringify(laptops))
             bodyy = {
                 'rows': laptops
             };
@@ -407,7 +555,84 @@
                     if (!response.ok) {
                         throw new Error(`${responseData.message}.`);
                     }
-                    console.log(responseData)
+
+                })
+
+                .catch( (error) => {
+                    // console.log(error)
+                    isError = true;
+                });
+
+            const newDiv = document.createElement('div')
+            newDiv.textContent = message
+            if (isError) {
+                newDiv.style.color = 'red';
+            }
+            TableDiv.after(newDiv);
+
+        })
+
+        importXmlFile.addEventListener('click', async () => {
+            var isError = false;
+            var message = '';
+            await fetch('/importXmlFile', {
+                method: 'GET'
+            })
+                .then(async (response) => await response.json())
+                .then(async (data) => {
+                    if (data.error) {
+                        const errorDiv = document.querySelector('#error');
+                        const error = `<p>${data.error}</p>`
+                        errorDiv.innerHTML = error;
+                    }
+                    laptops = data.rows;
+                    message = data.message;
+                    sessionStorage.setItem('laptops', JSON.stringify(laptops));
+                    if (isImported('laptops').length > 0) {
+                        TableBody.innerHTML = '';
+                    }
+                    displayXmlTable(laptops);
+                })
+                .catch( (error) => {
+                    // console.log(error)
+                    isError = true;
+                });
+
+
+
+            const newDiv = document.createElement('div')
+            newDiv.textContent = message;
+            if (isError) {
+                newDiv.style.color = 'red';
+            }
+            TableDiv.after(newDiv);
+
+
+
+        });
+        exportXmlFile.addEventListener('click', async () => {
+
+
+            bodyy = {
+                'rows': laptops
+            };
+            let isError = false;
+            let message = '';
+
+            await fetch('/exportXmlFile', {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body: JSON.stringify(bodyy),
+            })
+                .then( async (response) => {
+                    const responseData = await response.json();
+                    message = responseData.message;
+                    if (!response.ok) {
+                        throw new Error(`${responseData.message}.`);
+                    }
+
                 })
                 .catch( (error) => {
                     // console.log(error)
