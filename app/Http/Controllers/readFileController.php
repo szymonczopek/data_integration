@@ -121,9 +121,9 @@ class readFileController extends Controller
 
        $date = Carbon::now()->tz('Europe/Warsaw');;
       $fileName = 'plik_'.$date->format('d-m-y H-i-s').'.txt';
-
-      Storage::makeDirectory('exports');
-      $filePath = 'exports/'.$fileName;
+      $dir = 'exportTxt';
+      Storage::makeDirectory($dir);
+      $filePath = $dir.'/'.$fileName;
 
 
       foreach ($laptops as $laptop){

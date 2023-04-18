@@ -17,12 +17,18 @@ Route::get('/', [App\Http\Controllers\readFileController::class,'displayTxtMain'
 
 
 Route::get('/importTxtFile', [App\Http\Controllers\readFileController::class,'importTxtFile']);
-Route::post('/exportFile', [App\Http\Controllers\readFileController::class,'exportTxtFile']);
-Route::get('/exportFile', [App\Http\Controllers\readFileController::class,'exportTxtFile']);
+
+Route::post('/exportTxtFile', [App\Http\Controllers\readFileController::class,'exportTxtFile']);
+Route::get('/exportTxtFile', [App\Http\Controllers\readFileController::class,'exportTxtFile']);
+
+
 
 Route::get('/importXmlFile', [App\Http\Controllers\readXmlController::class,'importXmlFile']);
 
-Route::get('/xml', [App\Http\Controllers\readXmlController::class,'displayXmlMain']);
+Route::post('/exportXmlFile', [App\Http\Controllers\readXmlController::class,'exportXmlFile']);
+Route::get('/exportXmlFile', [App\Http\Controllers\readXmlController::class,'exportXmlFile']);
+
+
 
 
 

@@ -99,13 +99,13 @@
                 case 3: return 'resolution';
                 case 4: return 'screenType';
                 case 5: return 'touch';
-                case 6: return 'processor';
+                case 6: return 'processorName';
                 case 7: return 'physical_cores';
                 case 8: return 'clockSpeed';
                 case 9: return 'ram';
                 case 10: return 'discType';
                 case 11: return 'storage';
-                case 12: return 'name';
+                case 12: return 'graphic_cardName';
                 case 13: return 'memory';
                 case 14: return 'os';
                 case 15: return 'disc_reader';
@@ -116,13 +116,13 @@
                 case 'resolution': return 'resolution';
                 case 'screenType': return 'screenType';
                 case 'touch': return 'touch';
-                case 'processor': return 'processor';
+                case 'processorName': return 'processorName';
                 case 'physical_cores': return 'physical_cores';
                 case 'clock_speed': return 'clockSpeed';
                 case 'ram': return 'ram';
                 case 'discType': return 'discType';
                 case 'storage': return 'storage';
-                case 'name': return 'name';
+                case 'graphic_cardName': return 'graphic_cardName';
                 case 'memory': return 'memory';
                 case 'os': return 'os';
                 case 'disc_reader': return 'disc_reader';
@@ -201,7 +201,7 @@
                 case 'touch':
                     editableField = createSelect(cell, touchscreen, true);
                     break
-                case 'processor':
+                case 'processorName':
                     editableField = createSelect(cell, processors, true);
                     break
                 case 'physical_cores':
@@ -220,7 +220,7 @@
                 case 'discType':
                     editableField = createSelect(cell, discs, true);
                     break
-                case 'name':
+                case 'graphic_cardName':
                     editableField = createInput(cell, 'text', true,{minlength: 2, maxlength: 32});
                     break
                 case 'memory':
@@ -330,7 +330,7 @@
                 columnCounter = 0;
 
                 for (const prop in item) { // II
-                    if (typeof item[prop] === 'object' && !Array.isArray(item[prop])) { // jesli obiekt
+                    if (typeof item[prop] === 'object' && !Array.isArray(item[prop])) { // jesli obiekt, jesli istnieje 3 wymiar
                         for (const obj in (item[prop])) { // III
                             //  console.log(obj+':'+item[prop][obj]);
                             const newCell = document.createElement('td');
@@ -352,7 +352,6 @@
                     }
 
                 }
-                console.log('--------');
                 TableBody.append(newRow);
                 ++rowCounter;
             }
@@ -424,39 +423,27 @@
                 case 'txt':{
                     column = parseInt(splittedId[1]);
                     laptops[row][column] = value;
-                };break;
+                } break;
                 case 'xml': {
                     column = cell.className;
-                    for (const item of laptops) {
+                    var item = laptops[row]
                         for (const prop in item) { // II
                             if (typeof item[prop] === 'object' && !Array.isArray(item[prop])) { // jesli obiekt
                                 for (const obj in (item[prop])) { // III
                                     //  console.log(obj+':'+item[prop][obj]);
                                     if (obj === column) {
+                                        //item[prop][obj] = value;
                                         item[prop][obj] = value;
                                     }
                                 }
                             }
                             if (prop === column) item[prop] = value;
-
-
                         }
-                    }
-
                 } break;
                     return laptops
             }
-
             sessionStorage.setItem('laptops', JSON.stringify(laptops));
         }
-        /*function updateXmlVariable(cell, value) {
-            const splittedId = cell.id.split('_');
-            const row = parseInt(splittedId[0]);
-            const column = cell.className
-            laptops[row][column] = value;
-            sessionStorage.setItem('laptops', JSON.stringify(laptops));
-        }*/
-
         function validateInput(input) {
             let errors = [];
 
@@ -555,18 +542,18 @@
 
         exportTxtFile.addEventListener('click', async () => {
             //console.log(JSON.stringify(laptops))
-            bodyy = {
+            body = {
                 'rows': laptops
             };
             let isError = false;
             let message = '';
 
-            await fetch('/exportFile', {
+            await fetch('/exportTxtFile', {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 method: 'POST',
-                body: JSON.stringify(bodyy),
+                body: JSON.stringify(body),
             })
                 .then( async (response) => {
                     const responseData = await response.json();
@@ -632,7 +619,7 @@
         exportXmlFile.addEventListener('click', async () => {
 
 
-            bodyy = {
+            body = {
                 'rows': laptops
             };
             let isError = false;
@@ -643,7 +630,7 @@
                     'Content-Type': 'application/json',
                 },
                 method: 'POST',
-                body: JSON.stringify(bodyy),
+                body: JSON.stringify(body),
             })
                 .then( async (response) => {
                     const responseData = await response.json();
