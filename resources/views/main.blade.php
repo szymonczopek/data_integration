@@ -45,13 +45,13 @@
 
 
     <table id="TableDiv">
-        {{--<thead>
-        <tr>
-            @foreach($header as $hd)
-                <th>{{ $hd }}</th>
-            @endforeach
-        </tr>
-        </thead>--}}
+        <thead id="tHead">
+         <tr>
+             @foreach($header as $hd)
+                 <th>{{ $hd }}</th>
+             @endforeach
+         </tr>
+         </thead>
         <tbody id="TableBody">
         </tbody>
     </table>
@@ -323,7 +323,7 @@
             })
             const tableHeaderLabels = document.createElement('thead');
             tableHeaderLabels.append(tableHeaderRow);
-            TableDiv.append(tableHeaderLabels);
+            tHead.replaceWith(tableHeaderLabels)
 
 
             for (const item of data) { // I
@@ -332,8 +332,6 @@
                 columnCounter = 0;
 
                 for (const prop in item) { // II
-
-
                     if (typeof item[prop] === 'object' && !Array.isArray(item[prop])) { // jesli obiekt
                         for (const obj in (item[prop])) {
                                 console.log(obj+':'+item[prop][obj]);
@@ -345,7 +343,6 @@
                             ++columnCounter;
                             }
                         }
-
                     else { //jesli wartosc
                         console.log(prop+':'+item[prop])
                         const newCell = document.createElement('td');
