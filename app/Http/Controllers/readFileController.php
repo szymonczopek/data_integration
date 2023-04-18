@@ -110,7 +110,7 @@ class readFileController extends Controller
             "Procesor", "Liczba rdzeni procesora", "Częstotliwość procesora", "RAM", "Pojemność dysku",
             "Typ dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
             "Napęd optyczny"];
-        return view('main')->with('header', $header);
+        return view('main')/*->with('header', $header)*/;
 }
 
 

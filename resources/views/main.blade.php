@@ -46,11 +46,11 @@
 
     <table id="TableDiv">
         <thead id="tHead">
-         <tr>
+         {{--<tr>
              @foreach($header as $hd)
                  <th>{{ $hd }}</th>
              @endforeach
-         </tr>
+         </tr>--}}
          </thead>
         <tbody id="TableBody">
         </tbody>
@@ -70,11 +70,11 @@
 
 
 
-        const touchscreen = ['tak', 'nie'];
+        const touchscreen = ['tak', 'nie','yes','no'];
         const processors = ['intel pentium', 'intel celeron', 'intel i3', 'intel i5', 'intel i7', 'intel i9',
             'amd ryzen 3', 'amd ryzen 5', 'amd ryzen 7', 'amd ryzen 9', 'amd ryzen threadripper'];
         const cores = ['2', '4', '6', '8', '10', '12', '14', '16', '18', '24', '32', '64'];
-        const disks = ['HDD', 'SSD'];
+        const discs = ['HDD', 'SSD'];
         const matrixTypes = ['matowa', 'blyszczaca'];
         const drives = ['brak', 'DVD', 'Blu-Ray'];
         const size = ['10,5"', '11,6"', '12,4"', '13"', '13,3"', '13,4"', '13,5"', '13,6"',
@@ -92,39 +92,40 @@
         }
         function getClassNameByColumn(colNumber) {
             switch (colNumber) {
+
                 case 0: return 'counter';
                 case 1: return 'manufacturer';
                 case 2: return 'size';
                 case 3: return 'resolution';
-                case 4: return 'matrixType';
-                case 5: return 'touchscreen';
+                case 4: return 'screenType';
+                case 5: return 'touch';
                 case 6: return 'processor';
-                case 7: return 'cores';
+                case 7: return 'physical_cores';
                 case 8: return 'clockSpeed';
                 case 9: return 'ram';
-                case 10: return 'discCapacity';
-                case 11: return 'disks';
-                case 12: return 'graphicsCard';
-                case 13: return 'graphicsCardMemory';
-                case 14: return 'operatingSystem';
-                case 15: return 'drives';
+                case 10: return 'discType';
+                case 11: return 'storage';
+                case 12: return 'name';
+                case 13: return 'memory';
+                case 14: return 'os';
+                case 15: return 'disc_reader';
 
                 case 'id': return 'counter';
                 case 'manufacturer': return 'manufacturer';
-                case 'resolution': return 'resolution';
                 case 'size': return 'size';
-                case 'typeMatrix': return 'matrixType';
-                case 'touch': return 'touchscreen';
+                case 'resolution': return 'resolution';
+                case 'screenType': return 'screenType';
+                case 'touch': return 'touch';
                 case 'processor': return 'processor';
-                case 'physical_cores': return 'cores';
+                case 'physical_cores': return 'physical_cores';
                 case 'clock_speed': return 'clockSpeed';
                 case 'ram': return 'ram';
-                case 'storage': return 'discCapacity';
-                case 'typeDisks': return 'disks';
-                case 'name': return 'graphicsCard';
-                case 'memory': return 'graphicsCardMemory';
-                case 'os': return 'operatingSystem';
-                case 'disc_reader': return 'drives';
+                case 'discType': return 'discType';
+                case 'storage': return 'storage';
+                case 'name': return 'name';
+                case 'memory': return 'memory';
+                case 'os': return 'os';
+                case 'disc_reader': return 'disc_reader';
             }
         }
         function createInput(currentElement, type, isRequired = false, otherAttributes = {}) {
@@ -194,16 +195,16 @@
                 case 'resolution':
                     editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{3,4}x[0-9]{3,4}$' });
                     break
-                case 'matrixType':
+                case 'screenType':
                     editableField = createSelect(cell, matrixTypes, true);
                     break
-                case 'touchscreen':
+                case 'touch':
                     editableField = createSelect(cell, touchscreen, true);
                     break
                 case 'processor':
                     editableField = createSelect(cell, processors, true);
                     break
-                case 'cores':
+                case 'physical_cores':
                     editableField = createSelect(cell, cores, true);
                     break
                 case 'clockSpeed':
@@ -213,22 +214,22 @@
                     editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}GB$' });
 
                     break
-                case 'discCapacity':
+                case 'storage':
                     editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{3,}GB$' });
                     break
-                case 'disks':
-                    editableField = createSelect(cell, disks, true);
+                case 'discType':
+                    editableField = createSelect(cell, discs, true);
                     break
-                case 'graphicsCard':
+                case 'name':
                     editableField = createInput(cell, 'text', true,{minlength: 2, maxlength: 32});
                     break
-                case 'graphicsCardMemory':
+                case 'memory':
                     editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}GB$' });
                     break
-                case 'operatingSystem':
+                case 'os':
                     editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}GB$' });
                     break
-                case 'drives':
+                case 'disc_reader':
                     editableField = createSelect(cell, drives, true);
                     break
             }
@@ -239,6 +240,13 @@
             var rowCounter = 0;
             var columnCounter = 0;
 
+            const headers = ["Lp.","Producent", "Wielkość ekranu", "Rozdzielczość", "Rodzaj ekranu", "Ekran dotykowy",
+                "Procesor", "Liczba rdzeni procesora", "Częstotliwość procesora", "RAM", "Pojemność dysku",
+                "Typ dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
+                "Napęd optyczny"];
+
+            displayHeader(headers,tHead);
+
             data.forEach((row) => {
                 const newRow = document.createElement('tr');
                 newRow.setAttribute('id', 'row_' + rowCounter);
@@ -247,7 +255,7 @@
                 row.forEach((cell) => {
                    const newCell = document.createElement('td');
                     newCell.classList.add(getClassNameByColumn(columnCounter));
-                    newCell.setAttribute('id', 'field_' + rowCounter + '_' + columnCounter);
+                    newCell.setAttribute('id', rowCounter + '_' + columnCounter);
                     newCell.textContent = cell;
                     newRow.appendChild(newCell);
                     ++columnCounter;
@@ -266,7 +274,7 @@
                     editableCell.addEventListener('blur', () => {
                         let editedCell = editableCell.parentElement;
                         let currentValue = editableCell.value;
-                        updateVariable(editedCell, currentValue);
+                        updateVariable(editedCell, currentValue,'txt');
                         currentCell.removeChild(editableCell);
                         editedCell.textContent = currentValue;
                     })
@@ -314,17 +322,7 @@
                 "Typ dysku","Pojemność dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
                 "Napęd optyczny"];
 
-            const tableHeaderRow = document.createElement('tr');
-
-            headers.forEach((element)=>{
-                const label = document.createElement('th');
-                label.textContent = element;
-                tableHeaderRow.append(label);
-            })
-            const tableHeaderLabels = document.createElement('thead');
-            tableHeaderLabels.append(tableHeaderRow);
-            tHead.replaceWith(tableHeaderLabels)
-
+            displayHeader(headers,tHead);
 
             for (const item of data) { // I
                 const newRow = document.createElement('tr');
@@ -333,21 +331,21 @@
 
                 for (const prop in item) { // II
                     if (typeof item[prop] === 'object' && !Array.isArray(item[prop])) { // jesli obiekt
-                        for (const obj in (item[prop])) {
-                                console.log(obj+':'+item[prop][obj]);
+                        for (const obj in (item[prop])) { // III
+                            //  console.log(obj+':'+item[prop][obj]);
                             const newCell = document.createElement('td');
-                            newCell.classList.add(getClassNameByColumn(obj));//trzeba pamietac o type screen i type disk
-                            newCell.setAttribute('id', 'field_' + rowCounter + '_' + columnCounter);
+                            newCell.classList.add(getClassNameByColumn(obj));
+                            newCell.setAttribute('id',rowCounter + '_' + columnCounter);
                             newCell.textContent = item[prop][obj];
                             newRow.appendChild(newCell);
                             ++columnCounter;
                             }
                         }
                     else { //jesli wartosc
-                        console.log(prop+':'+item[prop])
+                       // console.log(prop+':'+item[prop])
                         const newCell = document.createElement('td');
                         newCell.classList.add(getClassNameByColumn(prop))
-                        newCell.setAttribute('id', 'field_' + rowCounter + '_' + columnCounter);
+                        newCell.setAttribute('id',rowCounter + '_' + columnCounter);
                         newCell.textContent = item[prop];
                         newRow.appendChild(newCell);
                         ++columnCounter;
@@ -358,28 +356,7 @@
                 TableBody.append(newRow);
                 ++rowCounter;
             }
-           /*for(let i=0; i<data.length; i++){
-                const newRow = document.createElement('tr');
-                newRow.setAttribute('id', 'row_' + rowCounter);
-                columnCounter = 0;
-
-
-
-                /*row.forEach((cell) => {
-                    const newCell = document.createElement('td');
-                    newCell.classList.add(getClassNameByColumn(columnCounter));
-                    newCell.setAttribute('id', 'field_' + rowCounter + '_' + columnCounter);
-                    newCell.textContent = cell;
-                    newRow.appendChild(newCell);
-                    ++columnCounter;
-
-                })*/
-
-
-            //}
-
-
-            /*let cellsCollection = TableDiv.getElementsByTagName('td')
+            let cellsCollection = TableDiv.getElementsByTagName('td')
             for(let i = 0; i < cellsCollection.length; i++) {
                 cellsCollection[i].addEventListener('dblclick', (event) => {
                     let currentCell = event.target;
@@ -387,7 +364,7 @@
                     editableCell.addEventListener('blur', () => {
                         let editedCell = editableCell.parentElement;
                         let currentValue = editableCell.value;
-                        updateVariable(editedCell, currentValue);
+                        updateVariable(editedCell, currentValue,'xml');
                         currentCell.removeChild(editableCell);
                         editedCell.textContent = currentValue;
                     })
@@ -424,16 +401,61 @@
                     }
                 })
             }
-*/
+
+        }
+        function displayHeader(headers, tHeadDiv){
+            const tableHeaderRow = document.createElement('tr');
+
+            headers.forEach((element)=>{
+                const label = document.createElement('th');
+                label.textContent = element;
+                tableHeaderRow.appendChild(label);
+            })
+            const tableHeaderLabels = document.createElement('thead');
+            tableHeaderLabels.appendChild(tableHeaderRow);
+            tHeadDiv.replaceWith(tableHeaderRow)
         }
 
-        function updateVariable(cell, value) {
+        function updateVariable(cell, value, fileType) {
             const splittedId = cell.id.split('_');
-            const row = parseInt(splittedId[1]);
-            const column = parseInt(splittedId[2]);
-            laptops[row][column] = value;
+            const row = parseInt(splittedId[0]);
+            var column;
+            switch(fileType) {
+                case 'txt':{
+                    column = parseInt(splittedId[1]);
+                    laptops[row][column] = value;
+                };break;
+                case 'xml': {
+                    column = cell.className;
+                    for (const item of laptops) {
+                        for (const prop in item) { // II
+                            if (typeof item[prop] === 'object' && !Array.isArray(item[prop])) { // jesli obiekt
+                                for (const obj in (item[prop])) { // III
+                                    //  console.log(obj+':'+item[prop][obj]);
+                                    if (obj === column) {
+                                        item[prop][obj] = value;
+                                    }
+                                }
+                            }
+                            if (prop === column) item[prop] = value;
+
+
+                        }
+                    }
+
+                } break;
+                    return laptops
+            }
+
             sessionStorage.setItem('laptops', JSON.stringify(laptops));
         }
+        /*function updateXmlVariable(cell, value) {
+            const splittedId = cell.id.split('_');
+            const row = parseInt(splittedId[0]);
+            const column = cell.className
+            laptops[row][column] = value;
+            sessionStorage.setItem('laptops', JSON.stringify(laptops));
+        }*/
 
         function validateInput(input) {
             let errors = [];
