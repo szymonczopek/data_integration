@@ -99,8 +99,8 @@
                 case 7: return 'physical_cores';
                 case 8: return 'clockSpeed';
                 case 9: return 'ram';
-                case 10: return 'discType';
-                case 11: return 'storage';
+                case 10: return 'storage';
+                case 11: return 'discType';
                 case 12: return 'graphic_cardName';
                 case 13: return 'memory';
                 case 14: return 'os';
