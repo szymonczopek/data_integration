@@ -66,9 +66,6 @@
         const exportXmlFile = document.getElementById("exportXmlFile");
         const TableDiv = document.getElementById("TableDiv");
         const TableBody = document.getElementById("TableBody");
-        var tHead = document.getElementById("tHead");
-
-
 
         const touchscreen = ['tak', 'nie','yes','no'];
         const processors = ['intel pentium', 'intel celeron', 'intel i3', 'intel i5', 'intel i7', 'intel i9',
@@ -80,7 +77,6 @@
         const size = ['10,5"', '11,6"', '12,4"', '13"', '13,3"', '13,4"', '13,5"', '13,6"',
             '14"', '14,1"', '14,2"', '14,4"', '14,5"', '15"', '15,6"', '16"', '16,1"', '16,2"',
             '17"', '17,3"', '18"'];
-
 
         var laptops = isImported('laptops');
 
@@ -245,7 +241,7 @@
                 "Typ dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
                 "Napęd optyczny"];
 
-            displayHeader(headers,tHead);
+            displayHeader(headers);
 
             data.forEach((row) => {
                 const newRow = document.createElement('tr');
@@ -322,7 +318,7 @@
                 "Typ dysku","Pojemność dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
                 "Napęd optyczny"];
 
-            displayHeader(headers,tHead);
+            displayHeader(headers);
 
             for (const item of data) { // I
                 const newRow = document.createElement('tr');
@@ -402,7 +398,8 @@
             }
 
         }
-        function displayHeader(headers, tHeadDiv){
+        function displayHeader(headers){
+            var tHeadDiv = document.getElementById("tHead");
             const tableHeaderRow = document.createElement('tr');
 
             headers.forEach((element)=>{
@@ -410,9 +407,10 @@
                 label.textContent = element;
                 tableHeaderRow.appendChild(label);
             })
-            const tableHeaderLabels = document.createElement('thead');
-            tableHeaderLabels.appendChild(tableHeaderRow);
-            tHeadDiv.replaceWith(tableHeaderRow)
+            //const tableHeaderLabels = document.createElement('thead');
+            //tableHeaderLabels.appendChild(tableHeaderRow);
+            tHeadDiv.innerHTML= '';
+            tHeadDiv.appendChild(tableHeaderRow);
         }
 
         function updateVariable(cell, value, fileType) {
