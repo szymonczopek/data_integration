@@ -10,15 +10,6 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
-        <!-- Styles -->
-       <style>
-           td {
-               text-align: center;
-           }
-
-       </style>
-
-
         <style>
             body{
                 font-family: monospace, sans-serif;
@@ -26,20 +17,46 @@
             td{
                 border-bottom: 2px solid black;
                 border-right: 2px solid black;
+                text-align: center;
             }
             th{
-                border-bottom: 2px solid black;
-                border-top: 2px solid black;
+                font-weight: bold;
+                border: 2px solid black;
                 background: orange;
+            }
+            button{
+                color: white;
+                text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+                border-top: black 2px solid;
+                height: 40px;
+                font-weight: bold;
+                font-size: 0.8rem;
+                margin: 5px;
+            }
+            button:hover{
+                opacity: 0.6;
+            }
+            td:hover{
+                background: #DCDCDC;
+            }
+            #importCsvFile, #exportCsvFile{
+                background: linear-gradient(to right, #00b09b, #96c93d);
+            }
+            #importXmlFile, #exportXmlFile{
+                background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
+            }
+            #findRow{
+                background: linear-gradient(to right, #800080, #ffc0cb);
             }
         </style>
     </head>
     <body>
 
-    <button type="button" id="importTxtFile">Import z pliku txt</button>
-    <button type="button" id="exportTxtFile">Eksport do pliku txt</button>
-    <button type="button" id="importXmlFile">Import z pliku xml</button>
-    <button type="button" id="exportXmlFile">Eksport do pliku xml</button>
+    <button type="button" id="importCsvFile">Import z pliku CSV</button>
+    <button type="button" id="exportCsvFile">Eksport do pliku CSV</button>
+    <button type="button" id="importXmlFile">Import z pliku XML</button>
+    <button type="button" id="exportXmlFile">Eksport do pliku XML</button>
+    <button type="button" id="findRow">Znajdz rekod</button>
 
     <div id="error"></div>
 
@@ -56,12 +73,15 @@
     <div id="producents"></div>
 
     <script>
-        const importTxtFile = document.getElementById("importTxtFile");
-        const exportTxtFile = document.getElementById("exportTxtFile");
+        const importCsvFile = document.getElementById("importCsvFile");
+        const exportCsvFile = document.getElementById("exportCsvFile");
         const importXmlFile = document.getElementById("importXmlFile");
         const exportXmlFile = document.getElementById("exportXmlFile");
+        const findRow = document.getElementById("findRow");
+
         const TableDiv = document.getElementById("TableDiv");
         const TableBody = document.getElementById("TableBody");
+
 
         const touchscreen = ['tak', 'nie','yes','no'];
         const processors = ['intel pentium', 'intel celeron', 'intel i3', 'intel i5', 'intel i7', 'intel i9',
@@ -102,22 +122,6 @@
                 case 14: return 'os';
                 case 15: return 'disc_reader';
 
-                case 'id': return 'counter';
-                case 'manufacturer': return 'manufacturer';
-                case 'size': return 'size';
-                case 'resolution': return 'resolution';
-                case 'screenType': return 'screenType';
-                case 'touch': return 'touch';
-                case 'processorName': return 'processorName';
-                case 'physical_cores': return 'physical_cores';
-                case 'clock_speed': return 'clockSpeed';
-                case 'ram': return 'ram';
-                case 'discType': return 'discType';
-                case 'storage': return 'storage';
-                case 'graphic_cardName': return 'graphic_cardName';
-                case 'memory': return 'memory';
-                case 'os': return 'os';
-                case 'disc_reader': return 'disc_reader';
             }
         }
         function createInput(currentElement, type, isRequired = false, otherAttributes = {}) {
@@ -228,7 +232,7 @@
             return editableField;
         }
 
-        function displayTxtTable(data) {
+        function displayCsvTable(data) {
             var rowCounter = 0;
             var columnCounter = 0;
 
@@ -266,7 +270,7 @@
                     editableCell.addEventListener('blur', () => {
                         let editedCell = editableCell.parentElement;
                         let currentValue = editableCell.value;
-                        updateVariable(editedCell, currentValue,'txt');
+                        updateVariable(editedCell, currentValue);
                         currentCell.removeChild(editableCell);
                         editedCell.textContent = currentValue;
                     })
@@ -305,95 +309,7 @@
             }
 
         }
-        function displayXmlTable(data) {
-            var rowCounter = 0;
-            var columnCounter = 0;
 
-            const headers = ["Lp.","Producent", "Ekran dotykowy", "Wielkość ekranu", "Rozdzielczosc", "Rodzaj ekranu",
-                "Procesor", "Liczba rdzeni procesora", "Częstotliwość procesora", "RAM",
-                "Typ dysku","Pojemność dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
-                "Napęd optyczny"];
-
-            displayHeader(headers);
-
-            for (const item of data) { // I
-                const newRow = document.createElement('tr');
-                newRow.setAttribute('id', 'row_' + rowCounter);
-                columnCounter = 0;
-
-                for (const prop in item) { // II
-                    if (typeof item[prop] === 'object' && !Array.isArray(item[prop])) { // jesli obiekt, jesli istnieje 3 wymiar
-                        for (const obj in (item[prop])) { // III
-                            //  console.log(obj+':'+item[prop][obj]);
-                            const newCell = document.createElement('td');
-                            newCell.classList.add(getClassNameByColumn(obj));
-                            newCell.setAttribute('id',rowCounter + '_' + columnCounter);
-                            newCell.textContent = item[prop][obj];
-                            newRow.appendChild(newCell);
-                            ++columnCounter;
-                            }
-                        }
-                    else { //jesli wartosc
-                       // console.log(prop+':'+item[prop])
-                        const newCell = document.createElement('td');
-                        newCell.classList.add(getClassNameByColumn(prop))
-                        newCell.setAttribute('id',rowCounter + '_' + columnCounter);
-                        newCell.textContent = item[prop];
-                        newRow.appendChild(newCell);
-                        ++columnCounter;
-                    }
-
-                }
-                TableBody.append(newRow);
-                ++rowCounter;
-            }
-            let cellsCollection = TableDiv.getElementsByTagName('td')
-            for(let i = 0; i < cellsCollection.length; i++) {
-                cellsCollection[i].addEventListener('dblclick', (event) => {
-                    let currentCell = event.target;
-                    let editableCell = createEditableCell(currentCell);
-                    editableCell.addEventListener('blur', () => {
-                        let editedCell = editableCell.parentElement;
-                        let currentValue = editableCell.value;
-                        updateVariable(editedCell, currentValue,'xml');
-                        currentCell.removeChild(editableCell);
-                        editedCell.textContent = currentValue;
-                    })
-                    editableCell.addEventListener('keypress', (event) => {
-                        if (event.key === 'Enter') {
-                            event.preventDefault();
-
-                            const editedCell = editableCell.parentElement;
-
-                            if (isValidInput(editableCell)) {
-                                if(editedCell.lastChild !== null) {
-                                    editedCell.removeChild(editedCell.lastChild);
-                                    editedCell.style.removeProperty('border');
-                                    editableCell.blur();
-                                }
-                            } else {
-                                let errors = validateInput(editableCell)
-                                let errorsText = '';
-                                errors.forEach((error) => {
-                                    errorsText += error + "\n";
-                                })
-
-                                const newSpan = document.createElement('span');
-                                newSpan.textContent = errorsText;
-                                editableCell.after(newSpan);
-                                editedCell.style.border = '5px solid rgb(200, 0, 0)';
-                            }
-                        }
-                    })
-                    currentCell.textContent = ''
-                    currentCell.appendChild(editableCell);
-                    if (currentCell.firstChild.tagName.toLowerCase() === 'input'){
-                        currentCell.firstChild.select();
-                    }
-                })
-            }
-
-        }
         function displayHeader(headers){
             var tHeadDiv = document.getElementById("tHead");
             const tableHeaderRow = document.createElement('tr');
@@ -409,33 +325,11 @@
             tHeadDiv.appendChild(tableHeaderRow);
         }
 
-        function updateVariable(cell, value, fileType) {
+        function updateVariable(cell, value) {
             const splittedId = cell.id.split('_');
             const row = parseInt(splittedId[0]);
-            var column;
-            switch(fileType) {
-                case 'txt':{
-                    column = parseInt(splittedId[1]);
-                    laptops[row][column] = value;
-                } break;
-                case 'xml': {
-                    column = cell.className;
-                    var item = laptops[row]
-                        for (const prop in item) { // II
-                            if (typeof item[prop] === 'object' && !Array.isArray(item[prop])) { // jesli obiekt
-                                for (const obj in (item[prop])) { // III
-                                    //  console.log(obj+':'+item[prop][obj]);
-                                    if (obj === column) {
-                                        //item[prop][obj] = value;
-                                        item[prop][obj] = value;
-                                    }
-                                }
-                            }
-                            if (prop === column) item[prop] = value;
-                        }
-                } break;
-                    return laptops
-            }
+            var column = parseInt(splittedId[1]);
+            laptops[row][column] = value;
             sessionStorage.setItem('laptops', JSON.stringify(laptops));
         }
         function validateInput(input) {
@@ -483,24 +377,29 @@
             }
             return true
         }
-        function displayProducents(prodNames, prodCount){
-            const producents = document.querySelector('#producents');
-            var html = ``;
 
-            for (let i = 0; i < prodNames.length; i++) {
-                html += `Liczba egzemplarzy firmy ${prodNames[i]} : ${prodCount[i]}</br>`;
+        function getRowId(findRow){
+            const newInput = document.createElement('input');
+            newInput.type = 'number';
+            newInput.style.marginLeft = '50px';
+            newInput.style.width = '70px';
+
+            if(findRow.children.length === 0) {
+                findRow.appendChild(newInput);
+                newInput.focus();
+                return 'clicked';
             }
-            producents.innerHTML = html;
+            else{
+                const rowId = findRow.querySelector('input');
+                return rowId.value;
+            }
+
         }
 
-        /*window.addEventListener('load', () => {
-            displayTable(laptops);
-        })*/
-
-            importTxtFile.addEventListener('click', async () => {
+        importCsvFile.addEventListener('click', async () => {
                 var isError = false;
                 var message = '';
-                await fetch('/importTxtFile', {
+                await fetch('/importCsvFile', {
                     method: 'GET'
                 })
                     .then(async (response) => await response.json())
@@ -516,7 +415,7 @@
                         if (isImported('laptops').length > 0) {
                             TableBody.innerHTML = '';
                         }
-                        displayTxtTable(laptops);
+                        displayCsvTable(laptops);
                     })
                     .catch( (error) => {
                         // console.log(error)
@@ -534,15 +433,15 @@
 
             });
 
-        exportTxtFile.addEventListener('click', async () => {
-            //console.log(JSON.stringify(laptops))
+        exportCsvFile.addEventListener('click', async () => {
+            console.log(JSON.stringify(laptops))
             body = {
                 'rows': laptops
             };
             let isError = false;
             let message = '';
 
-            await fetch('/exportTxtFile', {
+            await fetch('/exportCsvFile', {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -591,7 +490,7 @@
                     if (isImported('laptops').length > 0) {
                         TableBody.innerHTML = '';
                     }
-                    displayXmlTable(laptops);
+                    displayCsvTable(laptops);
                 })
                 .catch( (error) => {
                     // console.log(error)
@@ -641,6 +540,48 @@
 
             const newDiv = document.createElement('div')
             newDiv.textContent = message
+            if (isError) {
+                newDiv.style.color = 'red';
+            }
+            TableDiv.after(newDiv);
+
+        })
+
+        findRow.addEventListener('click', async () => {
+            var isError = false;
+            var message = '';
+
+            const rowId = getRowId(findRow);
+            if(rowId !== 'clicked' && rowId !== '') {
+
+                 await fetch('/findRow/'+rowId, {
+                     method: 'GET'
+                 })
+                     .then(async (response) => await response.json())
+                     .then(async (data) => {
+                         if (data.error) {
+                             const errorDiv = document.querySelector('#error');
+                             const error = `<p>${data.error}</p>`
+                             errorDiv.innerHTML = error;
+                         }
+
+                        /* laptops = data.rows;
+                         message = data.message;
+                         sessionStorage.setItem('laptops', JSON.stringify(laptops));
+                         if (isImported('laptops').length > 0) {
+                             TableBody.innerHTML = '';
+                         }
+                         displayCsvTable(laptops);*/
+                     })
+                     .catch( (error) => {
+                         // console.log(error)
+                         isError = true;
+                     });
+
+            }
+
+            const newDiv = document.createElement('div')
+            newDiv.textContent = message;
             if (isError) {
                 newDiv.style.color = 'red';
             }

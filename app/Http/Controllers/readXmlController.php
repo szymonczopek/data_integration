@@ -27,30 +27,22 @@ class readXmlController extends Controller
 
         foreach ($xml->laptop as $laptop) {
             $laptopData = array(
-                'id' => (int) $laptop['id'],
-                'manufacturer' => (string) $laptop->manufacturer,
-                'screen' => array(
-                    'touch' => (string) $laptop->screen['touch'],
-                    'size' => (string) $laptop->screen->size,
-                    'resolution' => (string) $laptop->screen->resolution,
-                    'screenType' => (string) $laptop->screen->type
-                ),
-                'processor' => array(
-                    'processorName' => (string) $laptop->processor->name,
-                    'physical_cores' => (int) $laptop->processor->physical_cores,
-                    'clock_speed' => (int) $laptop->processor->clock_speed
-                ),
-                'ram' => (string) $laptop->ram,
-                'disc' => array(
-                    'discType' => (string) $laptop->disc['type'],
-                    'storage' => (string) $laptop->disc->storage
-                ),
-                'graphic_card' => array(
-                    'graphic_cardName' => (string) $laptop->graphic_card->name,
-                    'memory' => (string) $laptop->graphic_card->memory
-                ),
-                'os' => (string) $laptop->os,
-                'disc_reader' => (string) $laptop->disc_reader
+                '0' => (int) $laptop['id'],
+                '1' => (string) $laptop->manufacturer,
+                '2' => (string) $laptop->screen->size,
+                '3' => (string) $laptop->screen->resolution,
+                '4' => (string) $laptop->screen->type,
+                '5' => (string) $laptop->screen['touch'],
+                '6' => (string) $laptop->processor->name,
+                '7' => (int) $laptop->processor->physical_cores,
+                '8' => (int) $laptop->processor->clock_speed,
+                '9' => (string) $laptop->ram,
+                '10' => (string) $laptop->disc->storage,
+                '11' => (string) $laptop->disc['type'],
+                '12' => (string) $laptop->graphic_card->name,
+                '13' => (string) $laptop->graphic_card->memory,
+                '14' => (string) $laptop->os,
+                '15' => (string) $laptop->disc_reader
             );
 
             $laptops[] = $laptopData;
@@ -79,33 +71,33 @@ class readXmlController extends Controller
 
         foreach ($laptops as $row) {
             $laptop = $xml->addChild('laptop');
-            $laptop->addAttribute('id', $row['id']);
+            $laptop->addAttribute('id', $row[0]);
 
-            $laptop->addChild('manufacturer', $row['manufacturer']);
+            $laptop->addChild('manufacturer', $row[1]);
 
             $screen = $laptop->addChild('screen');
-            $screen->addAttribute('touch', $row['screen']['touch']);
-            $screen->addChild('size', $row['screen']['size']);
-            $screen->addChild('resolution', $row['screen']['resolution']);
-            $screen->addChild('type', $row['screen']['screenType']);
+            $screen->addAttribute('touch', $row[5]);
+            $screen->addChild('size', $row[2]);
+            $screen->addChild('resolution', $row[3]);
+            $screen->addChild('type', $row[4]);
 
             $processor = $laptop->addChild('processor');
-            $processor->addChild('name', $row['processor']['processorName']);
-            $processor->addChild('physical_cores', $row['processor']['physical_cores']);
-            $processor->addChild('clock_speed', $row['processor']['clock_speed']);
+            $processor->addChild('name', $row[6]);
+            $processor->addChild('physical_cores', $row[7]);
+            $processor->addChild('clock_speed', $row[8]);
 
-            $laptop->addChild('ram', $row['ram']);
+            $laptop->addChild('ram', $row[9]);
 
             $disc = $laptop->addChild('disc');
-            $disc->addAttribute('type', $row['disc']['discType']);
-            $disc->addChild('storage', $row['disc']['storage']);
+            $disc->addAttribute('type', $row[11]);
+            $disc->addChild('storage', $row[10]);
 
             $graphic_card = $laptop->addChild('graphic_card');
-            $graphic_card->addChild('name', $row['graphic_card']['graphic_cardName']);
-            $graphic_card->addChild('memory', $row['graphic_card']['memory']);
+            $graphic_card->addChild('name', $row[12]);
+            $graphic_card->addChild('memory', $row[13]);
 
-            $laptop->addChild('os', $row['os']);
-            $laptop->addChild('disc_reader', $row['disc_reader']);
+            $laptop->addChild('os', $row[14]);
+            $laptop->addChild('disc_reader', $row[15]);
         }
 
 

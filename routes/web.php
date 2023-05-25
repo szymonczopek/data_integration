@@ -12,14 +12,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', [App\Http\Controllers\readFileController::class,'displayTxtMain']);
+Route::get('/', [App\Http\Controllers\readFileController::class,'displayMainView']);
 
 
 
-Route::get('/importTxtFile', [App\Http\Controllers\readFileController::class,'importTxtFile']);
+Route::get('/importCsvFile', [App\Http\Controllers\readFileController::class,'importCsvFile']);
 
-Route::post('/exportTxtFile', [App\Http\Controllers\readFileController::class,'exportTxtFile']);
-Route::get('/exportTxtFile', [App\Http\Controllers\readFileController::class,'exportTxtFile']);
+Route::post('/exportCsvFile', [App\Http\Controllers\readFileController::class,'exportCsvFile']);
+Route::get('/exportCsvFile', [App\Http\Controllers\readFileController::class,'exportCsvFile']);
 
 
 
