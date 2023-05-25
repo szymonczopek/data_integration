@@ -46,11 +46,7 @@
 
     <table id="TableDiv">
         <thead id="tHead">
-         {{--<tr>
-             @foreach($header as $hd)
-                 <th>{{ $hd }}</th>
-             @endforeach
-         </tr>--}}
+
          </thead>
         <tbody id="TableBody">
         </tbody>
