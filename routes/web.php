@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/', [App\Http\Controllers\readFileController::class,'displayMainView']);
+Route::get('/laptop/{id}', [App\Http\Controllers\LaptopController::class,'displayLaptop']);
+
+Route::post('/laptop/edit/{id}', [App\Http\Controllers\LaptopController::class,'editLaptop']);
+Route::get('/laptop/edit/{id}', [App\Http\Controllers\LaptopController::class,'editLaptop']);
 
 
 

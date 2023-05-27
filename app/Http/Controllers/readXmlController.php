@@ -11,13 +11,6 @@ use SimpleXMLElement;
 
 class readXmlController extends Controller
 {
-    public function displayXmlMain(){
-        $header = ["Lp.","Producent", "Ekran dotykowy", "Wielkość ekranu", "Rozdzielczosc", "Rodzaj ekranu",
-            "Procesor", "Liczba rdzeni procesora", "Częstotliwość procesora", "RAM",
-            "Typ dysku","Pojemność dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
-            "Napęd optyczny"];
-        return view('main')->with('header', $header);
-    }
     public function importXmlFile(){
 
         $filename = '../resources/files/katalog.xml';

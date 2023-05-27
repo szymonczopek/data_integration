@@ -14,6 +14,7 @@
             body{
                 font-family: monospace, sans-serif;
             }
+
             td{
                 border-bottom: 2px solid black;
                 border-right: 2px solid black;
@@ -32,6 +33,16 @@
                 font-weight: bold;
                 font-size: 0.8rem;
                 margin: 5px;
+            }
+            .buttonDiv{
+                display: flex;
+            }
+            .editButton{
+                background: linear-gradient(to right, #ffb347, #ffcc33);
+            }
+            .deleteButton{
+                background: #D23E1F;
+                padding: 0 15px;
             }
             button:hover{
                 opacity: 0.6;
@@ -77,7 +88,10 @@
         const exportCsvFile = document.getElementById("exportCsvFile");
         const importXmlFile = document.getElementById("importXmlFile");
         const exportXmlFile = document.getElementById("exportXmlFile");
+
         const findRow = document.getElementById("findRow");
+        const editButton = document.getElementById("editButton");
+        const deleteButton = document.getElementById("deleteButton");
 
         const TableDiv = document.getElementById("TableDiv");
         const TableBody = document.getElementById("TableBody");
@@ -232,7 +246,7 @@
             return editableField;
         }
 
-        function displayCsvTable(data) {
+        function displayTable(data, editable) {
             var rowCounter = 0;
             var columnCounter = 0;
 
@@ -240,6 +254,16 @@
                 "Procesor", "Liczba rdzeni procesora", "Częstotliwość procesora", "RAM", "Pojemność dysku",
                 "Typ dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
                 "Napęd optyczny"];
+
+            const editButton = document.createElement('button');
+            editButton.type = 'button';
+            editButton.className = 'editButton';
+            editButton.innerText = 'Zakoncz edycje';
+
+            const deleteButton = document.createElement('button')
+            deleteButton.type = 'button';
+            deleteButton.className = 'deleteButton';
+            deleteButton.innerText = 'X';
 
             displayHeader(headers);
 
@@ -257,9 +281,52 @@
                     ++columnCounter;
 
                 })
-
+                if(editable === true) {
+                    const buttonDiv = document.createElement('div');
+                    buttonDiv.className = 'buttonDiv';
+                    editButton.id = data[0][0];
+                    buttonDiv.append(editButton);
+                    buttonDiv.append(deleteButton);
+                    newRow.append(buttonDiv);
+                }
                 TableBody.append(newRow);
                 ++rowCounter;
+            })
+
+            editButton.addEventListener('click', async () => {
+                body = {
+                    'rows': laptops
+                };
+                let isError = false;
+                let message = '';
+
+                await fetch('/laptop/edit/'+editButton.id, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                })
+                    .then( async (response) => {
+                        const responseData = await response.json();
+                        message = responseData.message;
+                        if (!response.ok) {
+                            throw new Error(`${responseData.message}.`);
+                        }
+
+                    })
+
+                    .catch( (error) => {
+                        console.log(error)
+                        isError = true;
+                    });
+
+                const newDiv = document.createElement('div')
+                newDiv.textContent = message
+                if (isError) {
+                    newDiv.style.color = 'red';
+                }
+                TableDiv.after(newDiv);
             })
 
             let cellsCollection = TableDiv.getElementsByTagName('td')
@@ -319,8 +386,6 @@
                 label.textContent = element;
                 tableHeaderRow.appendChild(label);
             })
-            //const tableHeaderLabels = document.createElement('thead');
-            //tableHeaderLabels.appendChild(tableHeaderRow);
             tHeadDiv.innerHTML= '';
             tHeadDiv.appendChild(tableHeaderRow);
         }
@@ -396,6 +461,10 @@
 
         }
 
+        function addRowButtons(){
+
+        }
+
         importCsvFile.addEventListener('click', async () => {
                 var isError = false;
                 var message = '';
@@ -415,7 +484,7 @@
                         if (isImported('laptops').length > 0) {
                             TableBody.innerHTML = '';
                         }
-                        displayCsvTable(laptops);
+                        displayTable(laptops);
                     })
                     .catch( (error) => {
                         // console.log(error)
@@ -490,7 +559,7 @@
                     if (isImported('laptops').length > 0) {
                         TableBody.innerHTML = '';
                     }
-                    displayCsvTable(laptops);
+                    displayTable(laptops);
                 })
                 .catch( (error) => {
                     // console.log(error)
@@ -554,10 +623,16 @@
             const rowId = getRowId(findRow);
             if(rowId !== 'clicked' && rowId !== '') {
 
-                 await fetch('/findRow/'+rowId, {
+
+                 await fetch('/laptop/'+rowId, {
                      method: 'GET'
                  })
-                     .then(async (response) => await response.json())
+                     .then(async (response) => {
+                         if (response.status === 404) {
+                             throw new Error('Nie znaleziono danych dla podanego ID '+ rowId);
+                         }
+                         return response.json();
+                     })
                      .then(async (data) => {
                          if (data.error) {
                              const errorDiv = document.querySelector('#error');
@@ -565,16 +640,18 @@
                              errorDiv.innerHTML = error;
                          }
 
-                        /* laptops = data.rows;
+                         const laptop = data.laptop
                          message = data.message;
-                         sessionStorage.setItem('laptops', JSON.stringify(laptops));
-                         if (isImported('laptops').length > 0) {
+                        sessionStorage.setItem('laptop'+rowId, JSON.stringify(laptop));
+                         if (isImported('laptop'+rowId).length > 0) {
                              TableBody.innerHTML = '';
                          }
-                         displayCsvTable(laptops);*/
+                         displayTable(laptop, true);
+
                      })
                      .catch( (error) => {
-                         // console.log(error)
+                         message = 'Brak wiersza dla podanego ID '+ rowId
+                         console.error(error);
                          isError = true;
                      });
 
