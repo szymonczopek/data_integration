@@ -45,6 +45,22 @@ class DatabaseSeeder extends Seeder
                 'memory' => '6GB',
                 'os' => 'Windows 10',
                 'disc_reader' => 'tak'],
+
+            ['manufacturer' => 'Oppo',
+                'size' => '17"',
+                'resolution' => '1280x5600',
+                'screenType' => 'blyszczaca',
+                'touch' => 'tak',
+                'processorName' => 'intel i5',
+                'physicalCores' => 4,
+                'clockSpeed' => 3000,
+                'ram' => '12GB',
+                'storage' => '512GB',
+                'discType' => 'HDDD',
+                'graphicCardName' => 'NVIDIA GeForce GTX 1660',
+                'memory' => '6GB',
+                'os' => 'Windows 10',
+                'disc_reader' => 'tak'],
         ];
         Laptop::insert($data);
     }

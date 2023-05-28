@@ -286,6 +286,7 @@
                     buttonDiv.className = 'buttonDiv';
                     editButton.id = data[0][0];
                     buttonDiv.append(editButton);
+                    deleteButton.id = data[0][0];
                     buttonDiv.append(deleteButton);
                     newRow.append(buttonDiv);
                 }
@@ -303,12 +304,45 @@
                 let isError = false;
                 let message = '';
 
-                await fetch('/laptop/edit/' + editButton.id, {
+                await fetch('/laptop/' + editButton.id, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    method: 'POST',
+                    method: 'PATCH',
                     body: JSON.stringify(body),
+                })
+                    .then( async (response) => {
+                        const responseData = await response.json();
+                        message = responseData.message;
+                        tekst = responseData.tekst;
+                        console.log(tekst)
+                        if (!response.ok) {
+                            throw new Error(`${responseData.message}.`);
+                        }
+
+                    })
+
+                    .catch( (error) => {
+                        console.log(error)
+                        isError = true;
+                    });
+
+                const newDiv = document.createElement('div')
+                newDiv.textContent = message
+                if (isError) {
+                    newDiv.style.color = 'red';
+                }
+                TableDiv.after(newDiv);
+            })
+
+            deleteButton.addEventListener('click', async () => {
+                console.log('kliknieto deleteButton')
+
+                let isError = false;
+                let message = '';
+
+                await fetch('/laptop/' + deleteButton.id, {
+                    method: 'DELETE',
                 })
                     .then( async (response) => {
                         const responseData = await response.json();

@@ -14,6 +14,6 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         '/exportCsvFile',
         '/exportXmlFile',
-        '/laptop/edit/*',
+        '/laptop/*',
     ];
 }
