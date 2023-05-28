@@ -110,6 +110,7 @@
 
         var laptops = isImported('laptops');
 
+
         function isImported(item) {
             if (sessionStorage.getItem(item) !== null) {
                 return JSON.parse(sessionStorage.getItem(item));
@@ -222,7 +223,6 @@
                     break
                 case 'ram':
                     editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}GB$' });
-
                     break
                 case 'storage':
                     editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{3,}GB$' });
@@ -237,7 +237,7 @@
                     editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}GB$' });
                     break
                 case 'os':
-                    editableField = createInput(cell, 'text', true,{pattern: '^[0-9]{1,}GB$' });
+                    editableField = createInput(cell, 'text', true,{minlength: 2, maxlength: 32});
                     break
                 case 'disc_reader':
                     editableField = createSelect(cell, drives, true);
@@ -294,11 +294,11 @@
             })
 
             editButton.addEventListener('click', async () => {
-                console.log('taa')
-                const row = isImported('laptop'+ editButton.id)
+                console.log('kliknieto editButton')
+                var laptop = isImported('laptop'+ editButton.id)
 
                 body = {
-                    'row': row
+                    'row': laptop
                 };
                 let isError = false;
                 let message = '';
@@ -358,10 +358,12 @@
                             const editedCell = editableCell.parentElement;
 
                             if (isValidInput(editableCell)) {
-                                if(editedCell.lastChild !== null) {
-                                    editedCell.removeChild(editedCell.lastChild);
-                                    editedCell.style.removeProperty('border');
-                                    editableCell.blur();
+                                if(editedCell.hasChildNodes()){
+                                    if (editedCell.lastChild !== null) {
+                                        editedCell.removeChild(editedCell.lastChild);
+                                        editedCell.style.removeProperty('border');
+                                        editableCell.blur();
+                                    }
                                 }
                             } else {
                                 let errors = validateInput(editableCell)
@@ -401,20 +403,20 @@
         }
 
         function updateVariable(cell, value, id) {
+            var laptop = isImported('laptop'+id)
             const splittedId = cell.id.split('_');
             var row = parseInt(splittedId[0]);
             var column = parseInt(splittedId[1]);
 
             if(id !== null){
-                row = id
-                laptops[row][column] = value;
-                sessionStorage.setItem('laptop'+id, JSON.stringify(laptops));
-
+                laptop[0][column] = value;
+                sessionStorage.setItem('laptop'+id, JSON.stringify(laptop));
             }
             else{
                 laptops[row][column] = value;
                 sessionStorage.setItem('laptops', JSON.stringify(laptops));
             }
+
         }
         function validateInput(input) {
             let errors = [];
@@ -480,10 +482,6 @@
 
         }
 
-        function addRowButtons(){
-
-        }
-
         importCsvFile.addEventListener('click', async () => {
                 var isError = false;
                 var message = '';
@@ -503,7 +501,7 @@
                         if (isImported('laptops').length > 0) {
                             TableBody.innerHTML = '';
                         }
-                        displayTable(laptops);
+                        displayTable(laptops,false);
                     })
                     .catch( (error) => {
                         // console.log(error)
@@ -578,7 +576,7 @@
                     if (isImported('laptops').length > 0) {
                         TableBody.innerHTML = '';
                     }
-                    displayTable(laptops);
+                    displayTable(laptops,false);
                 })
                 .catch( (error) => {
                     // console.log(error)
@@ -644,7 +642,10 @@
 
 
                  await fetch('/laptop/'+rowId, {
-                     method: 'GET'
+                     headers: {
+                         'Content-Type': 'application/json',
+                     },
+                     method: 'GET',
                  })
                      .then(async (response) => {
                          if (!response.ok) {
