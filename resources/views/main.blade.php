@@ -258,7 +258,7 @@
             const editButton = document.createElement('button');
             editButton.type = 'button';
             editButton.className = 'editButton';
-            editButton.innerText = 'Zakoncz edycje';
+            editButton.innerText = 'Wyslij do bazy danych';
 
             const deleteButton = document.createElement('button')
             deleteButton.type = 'button';
@@ -294,13 +294,16 @@
             })
 
             editButton.addEventListener('click', async () => {
+                console.log('taa')
+                const row = isImported('laptop'+ editButton.id)
+
                 body = {
-                    'rows': laptops
+                    'row': row
                 };
                 let isError = false;
                 let message = '';
 
-                await fetch('/laptop/edit/'+editButton.id, {
+                await fetch('/laptop/edit/' + editButton.id, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -310,6 +313,8 @@
                     .then( async (response) => {
                         const responseData = await response.json();
                         message = responseData.message;
+                        tekst = responseData.tekst;
+                        console.log(tekst)
                         if (!response.ok) {
                             throw new Error(`${responseData.message}.`);
                         }
@@ -337,7 +342,12 @@
                     editableCell.addEventListener('blur', () => {
                         let editedCell = editableCell.parentElement;
                         let currentValue = editableCell.value;
-                        updateVariable(editedCell, currentValue);
+                        if(editable === true) {
+                            updateVariable(editedCell, currentValue, editButton.id);
+                        }
+                        else {
+                            updateVariable(editedCell, currentValue, null);
+                        }
                         currentCell.removeChild(editableCell);
                         editedCell.textContent = currentValue;
                     })
@@ -390,12 +400,21 @@
             tHeadDiv.appendChild(tableHeaderRow);
         }
 
-        function updateVariable(cell, value) {
+        function updateVariable(cell, value, id) {
             const splittedId = cell.id.split('_');
-            const row = parseInt(splittedId[0]);
+            var row = parseInt(splittedId[0]);
             var column = parseInt(splittedId[1]);
-            laptops[row][column] = value;
-            sessionStorage.setItem('laptops', JSON.stringify(laptops));
+
+            if(id !== null){
+                row = id
+                laptops[row][column] = value;
+                sessionStorage.setItem('laptop'+id, JSON.stringify(laptops));
+
+            }
+            else{
+                laptops[row][column] = value;
+                sessionStorage.setItem('laptops', JSON.stringify(laptops));
+            }
         }
         function validateInput(input) {
             let errors = [];
@@ -628,7 +647,7 @@
                      method: 'GET'
                  })
                      .then(async (response) => {
-                         if (response.status === 404) {
+                         if (!response.ok) {
                              throw new Error('Nie znaleziono danych dla podanego ID '+ rowId);
                          }
                          return response.json();
@@ -642,7 +661,7 @@
 
                          const laptop = data.laptop
                          message = data.message;
-                        sessionStorage.setItem('laptop'+rowId, JSON.stringify(laptop));
+                         sessionStorage.setItem('laptop'+rowId, JSON.stringify(laptop));
                          if (isImported('laptop'+rowId).length > 0) {
                              TableBody.innerHTML = '';
                          }
