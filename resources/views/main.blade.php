@@ -16,6 +16,7 @@
             }
 
             td{
+                height: 40px;
                 border-bottom: 2px solid black;
                 border-right: 2px solid black;
                 text-align: center;
@@ -37,7 +38,7 @@
             .buttonDiv{
                 display: flex;
             }
-            .editButton{
+            .editButton, .createButton{
                 background: linear-gradient(to right, #ffb347, #ffcc33);
             }
             .deleteButton{
@@ -59,7 +60,7 @@
             #importDb, #exportDb{
                 background: linear-gradient(to right, #ffe000, #799f0c);
             }
-            #findRow{
+            #findRow, #createRow{
                 background: linear-gradient(to right, #800080, #ffc0cb);
             }
         </style>
@@ -72,6 +73,7 @@
     <button type="button" id="exportXmlFile">Eksport do pliku XML</button>
     <button type="button" id="importDb">Import z bazy danych</button>
     <button type="button" id="exportDb">Eksport z bazy danych</button>
+    <button type="button" id="createRow">Dodaj rekod</button>
     <button type="button" id="findRow">Znajdz rekod</button>
 
     <div id="error"></div>
@@ -84,9 +86,8 @@
         <tbody id="TableBody">
         </tbody>
     </table>
+   {{-- <div id="messageDiv"></div>--}}
 
-
-    <div id="producents"></div>
 
     <script>
         const importCsvFile = document.getElementById("importCsvFile");
@@ -95,7 +96,7 @@
         const exportXmlFile = document.getElementById("exportXmlFile");
         const importDb = document.getElementById("importDb");
         const exportDb = document.getElementById("exportDb");
-
+        const createRow = document.getElementById("createRow");
         const findRow = document.getElementById("findRow");
         const editButton = document.getElementById("editButton");
         const deleteButton = document.getElementById("deleteButton");
@@ -103,6 +104,7 @@
         const TableDiv = document.getElementById("TableDiv");
         const TableBody = document.getElementById("TableBody");
 
+        const messageDiv = document.createElement('div');
 
         const touchscreen = ['tak', 'nie','yes','no'];
         const processors = ['intel pentium', 'intel celeron', 'intel i3', 'intel i5', 'intel i7', 'intel i9',
@@ -265,7 +267,7 @@
             const editButton = document.createElement('button');
             editButton.type = 'button';
             editButton.className = 'editButton';
-            editButton.innerText = 'Wyslij do bazy danych';
+            editButton.innerText = 'Zaktualizuj';
 
             const deleteButton = document.createElement('button')
             deleteButton.type = 'button';
@@ -332,12 +334,12 @@
                         isError = true;
                     });
 
-                const newDiv = document.createElement('div')
-                newDiv.textContent = message
+                messageDiv.textContent = message;
                 if (isError) {
-                    newDiv.style.color = 'red';
+                    messageDiv.style.color = 'red';
                 }
-                TableDiv.after(newDiv);
+                else messageDiv.style.color = 'black';
+                TableDiv.after(messageDiv);
             })
 
             deleteButton.addEventListener('click', async () => {
@@ -365,12 +367,12 @@
                         isError = true;
                     });
 
-                const newDiv = document.createElement('div')
-                newDiv.textContent = message
+                messageDiv.textContent = message;
                 if (isError) {
-                    newDiv.style.color = 'red';
+                    messageDiv.style.color = 'red';
                 }
-                TableDiv.after(newDiv);
+                else messageDiv.style.color = 'black';
+                TableDiv.after(messageDiv);
             })
 
             let cellsCollection = TableDiv.getElementsByTagName('td')
@@ -547,16 +549,14 @@
                         isError = true;
                     });
 
-                const newDiv = document.createElement('div')
-                newDiv.textContent = message;
-                if (isError) {
-                    newDiv.style.color = 'red';
-                }
-                TableDiv.after(newDiv);
+            messageDiv.textContent = message;
+            if (isError) {
+                messageDiv.style.color = 'red';
+            }
+            else messageDiv.style.color = 'black';
+            TableDiv.after(messageDiv);
 
-
-
-            });
+        });
 
         exportCsvFile.addEventListener('click', async () => {
             console.log(JSON.stringify(laptops))
@@ -587,12 +587,12 @@
                     isError = true;
                 });
 
-            const newDiv = document.createElement('div')
-            newDiv.textContent = message
+            messageDiv.textContent = message;
             if (isError) {
-                newDiv.style.color = 'red';
+                messageDiv.style.color = 'red';
             }
-            TableDiv.after(newDiv);
+            else messageDiv.style.color = 'black';
+            TableDiv.after(messageDiv);
 
         })
 
@@ -623,13 +623,13 @@
                 });
 
 
-
-            const newDiv = document.createElement('div')
-            newDiv.textContent = message;
+            messageDiv.textContent = message;
             if (isError) {
-                newDiv.style.color = 'red';
+                messageDiv.style.color = 'red';
             }
-            TableDiv.after(newDiv);
+            else messageDiv.style.color = 'black';
+            TableDiv.after(messageDiv);
+
         });
         exportXmlFile.addEventListener('click', async () => {
 
@@ -660,12 +660,12 @@
                     isError = true;
                 });
 
-            const newDiv = document.createElement('div')
-            newDiv.textContent = message
+            messageDiv.textContent = message;
             if (isError) {
-                newDiv.style.color = 'red';
+                messageDiv.style.color = 'red';
             }
-            TableDiv.after(newDiv);
+            else messageDiv.style.color = 'black';
+            TableDiv.after(messageDiv);
         })
 
         findRow.addEventListener('click', async () => {
@@ -712,12 +712,12 @@
 
             }
 
-            const newDiv = document.createElement('div')
-            newDiv.textContent = message;
+            messageDiv.textContent = message;
             if (isError) {
-                newDiv.style.color = 'red';
+                messageDiv.style.color = 'red';
             }
-            TableDiv.after(newDiv);
+            else messageDiv.style.color = 'black';
+            TableDiv.after(messageDiv);
 
         })
 
@@ -750,14 +750,41 @@
 
 
 
-            const newDiv = document.createElement('div')
-            newDiv.textContent = message;
+            messageDiv.textContent = message;
             if (isError) {
-                newDiv.style.color = 'red';
+                messageDiv.style.color = 'red';
             }
-            TableDiv.after(newDiv);
+            else messageDiv.style.color = 'black';
+            TableDiv.after(messageDiv);
 
         })
+        createRow.addEventListener('click', async () => {
+            const headers = ["Producent", "Wielkość ekranu", "Rozdzielczość", "Rodzaj ekranu", "Ekran dotykowy",
+                "Procesor", "Liczba rdzeni procesora", "Częstotliwość procesora", "RAM", "Pojemność dysku",
+                "Typ dysku", "Karta graficzna", "Pamięć karty graficznej", "System operacyjny",
+                "Napęd optyczny"];
+
+            displayHeader(headers);
+            TableBody.innerHTML = '';
+            const newRow = document.createElement('tr');
+            for (let i = 0; i <= 14; i++) {
+                    const newCell = document.createElement('td');
+                    newCell.classList.add(getClassNameByColumn(i));
+                    newCell.setAttribute('id', '0' + '_' + i);
+                    newCell.textContent = '';
+                    newRow.appendChild(newCell);
+            }
+                    TableBody.append(newRow);
+
+            const createButton = document.createElement('button');
+            createButton.type = 'button';
+            createButton.className = 'createButton';
+            createButton.innerText = 'Dodaj';
+            const buttonDiv = document.createElement('div');
+            buttonDiv.className = 'buttonDiv';
+            buttonDiv.append(createButton);
+            newRow.append(buttonDiv);
+        });
 
     </script>
     </body>
