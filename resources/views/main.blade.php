@@ -56,6 +56,9 @@
             #importXmlFile, #exportXmlFile{
                 background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
             }
+            #importDb, #exportDb{
+                background: linear-gradient(to right, #ffe000, #799f0c);
+            }
             #findRow{
                 background: linear-gradient(to right, #800080, #ffc0cb);
             }
@@ -67,6 +70,8 @@
     <button type="button" id="exportCsvFile">Eksport do pliku CSV</button>
     <button type="button" id="importXmlFile">Import z pliku XML</button>
     <button type="button" id="exportXmlFile">Eksport do pliku XML</button>
+    <button type="button" id="importDb">Import z bazy danych</button>
+    <button type="button" id="exportDb">Eksport z bazy danych</button>
     <button type="button" id="findRow">Znajdz rekod</button>
 
     <div id="error"></div>
@@ -88,6 +93,8 @@
         const exportCsvFile = document.getElementById("exportCsvFile");
         const importXmlFile = document.getElementById("importXmlFile");
         const exportXmlFile = document.getElementById("exportXmlFile");
+        const importDb = document.getElementById("importDb");
+        const exportDb = document.getElementById("exportDb");
 
         const findRow = document.getElementById("findRow");
         const editButton = document.getElementById("editButton");
@@ -314,8 +321,6 @@
                     .then( async (response) => {
                         const responseData = await response.json();
                         message = responseData.message;
-                        tekst = responseData.tekst;
-                        console.log(tekst)
                         if (!response.ok) {
                             throw new Error(`${responseData.message}.`);
                         }
@@ -625,9 +630,6 @@
                 newDiv.style.color = 'red';
             }
             TableDiv.after(newDiv);
-
-
-
         });
         exportXmlFile.addEventListener('click', async () => {
 
@@ -664,7 +666,6 @@
                 newDiv.style.color = 'red';
             }
             TableDiv.after(newDiv);
-
         })
 
         findRow.addEventListener('click', async () => {
@@ -710,6 +711,44 @@
                      });
 
             }
+
+            const newDiv = document.createElement('div')
+            newDiv.textContent = message;
+            if (isError) {
+                newDiv.style.color = 'red';
+            }
+            TableDiv.after(newDiv);
+
+        })
+
+        importDb.addEventListener('click', async () => {
+            var isError = false;
+            var message = '';
+            await fetch('/laptops', {
+                method: 'GET'
+            })
+                .then(async (response) => await response.json())
+                .then(async (data) => {
+                    if (data.error) {
+                        const errorDiv = document.querySelector('#error');
+                        const error = `<p>${data.error}</p>`
+                        errorDiv.innerHTML = error;
+                    }
+                    laptops = data.rows;
+                    console.log(laptops)
+                    message = data.message;
+                    sessionStorage.setItem('laptops', JSON.stringify(laptops));
+                    if (isImported('laptops').length > 0) {
+                        TableBody.innerHTML = '';
+                    }
+                    displayTable(laptops,false);
+                })
+                .catch( (error) => {
+                    // console.log(error)
+                    isError = true;
+                });
+
+
 
             const newDiv = document.createElement('div')
             newDiv.textContent = message;
