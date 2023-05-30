@@ -15,5 +15,6 @@ class VerifyCsrfToken extends Middleware
         '/exportCsvFile',
         '/exportXmlFile',
         '/laptop/*',
+        '/newLaptop',
     ];
 }

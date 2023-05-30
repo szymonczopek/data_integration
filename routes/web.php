@@ -14,10 +14,12 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', [App\Http\Controllers\readFileController::class,'displayMainView']);
 
+Route::post('/newLaptop', [App\Http\Controllers\LaptopController::class,'newLaptop']);
+Route::get('/laptops', [App\Http\Controllers\LaptopController::class,'displayAllLaptops']);
 Route::get('/laptop/{id}', [App\Http\Controllers\LaptopController::class,'displayLaptop']);
 Route::patch('/laptop/{id}', [App\Http\Controllers\LaptopController::class,'editLaptop']);
 Route::delete('/laptop/{id}', [App\Http\Controllers\LaptopController::class,'deleteLaptop']);
-Route::get('/laptops', [App\Http\Controllers\LaptopController::class,'displayAllLaptops']);
+
 
 
 

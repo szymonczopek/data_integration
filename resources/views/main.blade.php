@@ -16,7 +16,6 @@
             }
 
             td{
-                height: 40px;
                 border-bottom: 2px solid black;
                 border-right: 2px solid black;
                 text-align: center;
@@ -86,8 +85,6 @@
         <tbody id="TableBody">
         </tbody>
     </table>
-   {{-- <div id="messageDiv"></div>--}}
-
 
     <script>
         const importCsvFile = document.getElementById("importCsvFile");
@@ -206,7 +203,6 @@
             let editableField
             switch (cell.className) {
                 case 'manufacturer':
-                    // editableField = createInput(currentCell, 'text', true, {minlength: '2', maxlength: '10'})
                     editableField = createInput(cell, 'text', true,{minlength: 2, maxlength: 16});
                     break
                 case 'size':
@@ -304,7 +300,6 @@
             })
 
             editButton.addEventListener('click', async () => {
-                console.log('kliknieto editButton')
                 var laptop = isImported('laptop'+ editButton.id)
 
                 body = {
@@ -343,8 +338,6 @@
             })
 
             deleteButton.addEventListener('click', async () => {
-                console.log('kliknieto deleteButton')
-
                 let isError = false;
                 let message = '';
 
@@ -354,8 +347,6 @@
                     .then( async (response) => {
                         const responseData = await response.json();
                         message = responseData.message;
-                        tekst = responseData.tekst;
-                        console.log(tekst)
                         if (!response.ok) {
                             throw new Error(`${responseData.message}.`);
                         }
@@ -413,7 +404,7 @@
                                     errorsText += error + "\n";
                                 })
 
-                                const newSpan = document.createElement('span');
+                                const newSpan = document.createElement('div');
                                 newSpan.textContent = errorsText;
                                 editableCell.after(newSpan);
                                 editedCell.style.border = '5px solid rgb(200, 0, 0)';
@@ -443,8 +434,9 @@
             tHeadDiv.appendChild(tableHeaderRow);
         }
 
-        function updateVariable(cell, value, id) {
+        function updateVariable(cell, value, id, create) {
             var laptop = isImported('laptop'+id)
+            var newLaptop = isImported('newLaptop')
             const splittedId = cell.id.split('_');
             var row = parseInt(splittedId[0]);
             var column = parseInt(splittedId[1]);
@@ -452,6 +444,10 @@
             if(id !== null){
                 laptop[0][column] = value;
                 sessionStorage.setItem('laptop'+id, JSON.stringify(laptop));
+            }
+            if(create === true){
+                newLaptop[0][column-1] = value;
+                sessionStorage.setItem('newLaptop', JSON.stringify(newLaptop));
             }
             else{
                 laptops[row][column] = value;
@@ -559,7 +555,6 @@
         });
 
         exportCsvFile.addEventListener('click', async () => {
-            console.log(JSON.stringify(laptops))
             body = {
                 'rows': laptops
             };
@@ -632,8 +627,6 @@
 
         });
         exportXmlFile.addEventListener('click', async () => {
-
-
             body = {
                 'rows': laptops
             };
@@ -735,7 +728,6 @@
                         errorDiv.innerHTML = error;
                     }
                     laptops = data.rows;
-                    console.log(laptops)
                     message = data.message;
                     sessionStorage.setItem('laptops', JSON.stringify(laptops));
                     if (isImported('laptops').length > 0) {
@@ -765,9 +757,13 @@
                 "Napęd optyczny"];
 
             displayHeader(headers);
+            const emptyLaptop = [['','','','','','','','','','','','','','','']]
+            sessionStorage.setItem('newLaptop', JSON.stringify(emptyLaptop))
+
+
             TableBody.innerHTML = '';
             const newRow = document.createElement('tr');
-            for (let i = 0; i <= 14; i++) {
+            for (let i = 1; i <= 15; i++) {
                     const newCell = document.createElement('td');
                     newCell.classList.add(getClassNameByColumn(i));
                     newCell.setAttribute('id', '0' + '_' + i);
@@ -784,6 +780,90 @@
             buttonDiv.className = 'buttonDiv';
             buttonDiv.append(createButton);
             newRow.append(buttonDiv);
+
+            let cellsCollection = TableDiv.getElementsByTagName('td')
+            for(let i = 0; i < cellsCollection.length; i++) {
+                cellsCollection[i].addEventListener('dblclick', (event) => {
+                    let currentCell = event.target;
+                    let editableCell = createEditableCell(currentCell);
+                    editableCell.addEventListener('blur', () => {
+                        let editedCell = editableCell.parentElement;
+                        let currentValue = editableCell.value;
+                        updateVariable(editedCell, currentValue, null, true);
+                        currentCell.removeChild(editableCell);
+                        editedCell.textContent = currentValue;
+                    })
+                    editableCell.addEventListener('keypress', (event) => {
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
+                            const editedCell = editableCell.parentElement;
+                            if (isValidInput(editableCell)) {
+                                if(editedCell.hasChildNodes()){
+                                    if (editedCell.lastChild !== null) {
+                                        editedCell.removeChild(editedCell.lastChild);
+                                        editedCell.style.removeProperty('border');
+                                        editableCell.blur();
+                                    }
+                                }
+                            } else {
+                                let errors = validateInput(editableCell)
+                                let errorsText = '';
+                                errors.forEach((error) => {
+                                    errorsText += error + "\n";
+                                })
+
+                                const newSpan = document.createElement('span');
+                                newSpan.textContent = errorsText;
+                                editableCell.after(newSpan);
+                                editedCell.style.border = '5px solid rgb(200, 0, 0)';
+                            }
+                        }
+                    })
+                    currentCell.textContent = ''
+                    currentCell.appendChild(editableCell);
+                    if (currentCell.firstChild.tagName.toLowerCase() === 'input'){
+                        currentCell.firstChild.select();
+                    }
+                })
+            }
+
+            createButton.addEventListener('click', async () => {
+                var newLaptop = isImported('newLaptop');
+console.log(newLaptop)
+                body = {
+                    'newLaptop': newLaptop
+                };
+                let isError = false;
+                let message = '';
+
+                await fetch('/newLaptop', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                })
+                    .then( async (response) => {
+                        const responseData = await response.json();
+                        message = responseData.message;
+                        if (!response.ok) {
+                            throw new Error(`${responseData.message}.`);
+                        }
+
+                    })
+                    .catch( (error) => {
+                        // console.log(error)
+                        isError = true;
+                    });
+
+                messageDiv.textContent = message;
+                if (isError) {
+                    messageDiv.style.color = 'red';
+                }
+                else messageDiv.style.color = 'black';
+                TableDiv.after(messageDiv);
+            })
+
         });
 
     </script>
