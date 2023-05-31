@@ -757,7 +757,7 @@
                 "Napęd optyczny"];
 
             displayHeader(headers);
-            const emptyLaptop = [['','','','','','','','','','','','','','','']]
+            const emptyLaptop = [[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']]
             sessionStorage.setItem('newLaptop', JSON.stringify(emptyLaptop))
 
 
@@ -829,9 +829,9 @@
 
             createButton.addEventListener('click', async () => {
                 var newLaptop = isImported('newLaptop');
-console.log(newLaptop)
+
                 body = {
-                    'newLaptop': newLaptop
+                    'newLaptop' : newLaptop
                 };
                 let isError = false;
                 let message = '';
@@ -846,13 +846,14 @@ console.log(newLaptop)
                     .then( async (response) => {
                         const responseData = await response.json();
                         message = responseData.message;
+                        console.log(message)
                         if (!response.ok) {
                             throw new Error(`${responseData.message}.`);
                         }
 
                     })
                     .catch( (error) => {
-                        // console.log(error)
+                        console.log(error)
                         isError = true;
                     });
 

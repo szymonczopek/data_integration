@@ -15,21 +15,21 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->string('manufacturer');
-            $table->string('size');
-            $table->string('resolution');
-            $table->string('screenType');
-            $table->string('touch');
-            $table->string('processorName');
-            $table->integer('physicalCores');
-            $table->integer( 'clockSpeed');
-            $table->string('ram');
-            $table->string('storage');
-            $table->string('discType');
-            $table->string('graphicCardName');
-            $table->string('memory');
-            $table->string('os');
-            $table->string('disc_reader');
+            $table->string('manufacturer')->nullable();
+            $table->string('size')->nullable();
+            $table->string('resolution')->nullable();
+            $table->string('screenType')->nullable();
+            $table->string('touch')->nullable();
+            $table->string('processorName')->nullable();
+            $table->string('physicalCores')->nullable();
+            $table->string( 'clockSpeed')->nullable();
+            $table->string('ram')->nullable();
+            $table->string('storage')->nullable();
+            $table->string('discType')->nullable();
+            $table->string('graphicCardName')->nullable();
+            $table->string('memory')->nullable();
+            $table->string('os')->nullable();
+            $table->string('disc_reader')->nullable();
         });
     }
 
