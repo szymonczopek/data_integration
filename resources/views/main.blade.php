@@ -836,7 +836,7 @@
                 let isError = false;
                 let message = '';
 
-                await fetch('/newLaptop', {
+                await fetch('/laptop', {
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -846,7 +846,6 @@
                     .then( async (response) => {
                         const responseData = await response.json();
                         message = responseData.message;
-                        console.log(message)
                         if (!response.ok) {
                             throw new Error(`${responseData.message}.`);
                         }

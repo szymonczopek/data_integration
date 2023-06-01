@@ -96,10 +96,8 @@ function newLaptop(Request $request){
           ]);
 
     return response()->json([
-        'message' => $laptop[2]
-        //'message' => 'Utworzono pomyslnie'
-    ],
-        200)
+        'message' => 'Utworzono pomyslnie'
+    ], 200)
         ->header('Content-Type', 'application/json');
 }
 
