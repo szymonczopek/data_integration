@@ -1,8 +1,8 @@
 # Data integration DB - CSV - XML</br>
 
-## To run this program:</br>
-
 <img  src="https://imageupload.io/ib/C9Kla9lxb3STFu5_1685631637.png" alt="integ.png"/>
+
+## To run this program:</br>
 
 ### 1. Make sure you have the following tools installed on your computer:</br>
 
@@ -15,7 +15,7 @@ Web server (e.g., Apache, etc.)</br>
 
 Using Git repository, you can use this command:
 
-    git clone https://github.com/szymonczopek/integ.git
+    git clone https://github.com/szymonczopek/data_integration.git
 
 ### 3. Install dependencies:</br>
 
