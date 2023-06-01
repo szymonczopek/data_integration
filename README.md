@@ -1,8 +1,8 @@
+## To run this program:</br>
+
 #Data integration DB - CSV - XML</br>
 
 <img  src="https://imageupload.io/ib/C9Kla9lxb3STFu5_1685631637.png" alt="integ.png"/>
-
-## To run this program:</br>
 
 ### 1. Make sure you have the following tools installed on your computer:</br>
 
