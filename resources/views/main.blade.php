@@ -31,7 +31,7 @@
                 border-top: black 2px solid;
                 height: 40px;
                 font-weight: bold;
-                font-size: 0.8rem;
+                font-size: 0.9rem;
                 margin: 5px;
             }
             .buttonDiv{
@@ -71,7 +71,7 @@
     <button type="button" id="importXmlFile">Import z pliku XML</button>
     <button type="button" id="exportXmlFile">Eksport do pliku XML</button>
     <button type="button" id="importDb">Import z bazy danych</button>
-    <button type="button" id="exportDb">Eksport z bazy danych</button>
+    <button type="button" id="exportDb">Eksport do bazy danych</button>
     <button type="button" id="createRow">Dodaj rekod</button>
     <button type="button" id="findRow">Znajdz rekod</button>
 
