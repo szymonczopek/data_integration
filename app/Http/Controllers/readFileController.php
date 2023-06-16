@@ -35,7 +35,7 @@ class readFileController extends Controller
         foreach ($lines as $line) {
             ++$rowNumber;
             $rowNumber = strval($rowNumber);
-            $elements = explode(";", $line);
+            $elements = explode(",", $line);
             array_unshift($elements, $rowNumber);
             $rows[] = $elements;
         }
@@ -67,7 +67,7 @@ class readFileController extends Controller
       foreach ($laptops as $laptop){
           $line = '';
           foreach ($laptop as $lap){
-              $line .= $lap.';';
+              $line .= $lap.',';
           }
           Storage::append($filePath, $line);
       }
