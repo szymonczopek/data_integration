@@ -1,5 +1,7 @@
 # Data integration DB - CSV - XML</br>
 
+Database - CSV - XML data integration. Import and export data to file. CRUD for database data. Live displaying, editing and validation.
+
 <img  src="https://imageupload.io/ib/OvKpmBsNxi0xsUQ_1685632642.png" alt="integ.png"/>
 
 ## To run this program:</br>
